@@ -2,24 +2,39 @@ package main
 
 import "fmt"
 
+type identifier struct {
+	moduleName string
+	name       string
+}
+
+func (id identifier) importLine() string {
+	if id.moduleName == "" {
+		return ""
+	}
+	return "import " + id.moduleName
+}
+
 type module interface {
 	name() string
 	source() []string
 }
 
 type dictModule struct {
-	moduleName  string
-	typeName    string
-	keyTypeName string
+	typeId       identifier
+	publicKeyId  identifier
+	privateKeyId identifier
 }
 
 func (module dictModule) name() string {
-	return module.moduleName
+	return module.typeId.moduleName
 }
 
 func (module dictModule) source() []string {
 	return []string{
-		"module " + module.moduleName + " exposing (..)",
+		"module " + module.typeId.moduleName + " exposing (..)",
+		module.typeId.importLine(),
+		module.publicKeyId.importLine(),
+		module.privateKeyId.importLine(),
 	}
 }
 
@@ -48,9 +63,17 @@ func readConfig() config {
 		path: "src",
 		modules: []module{
 			dictModule{
-				moduleName:  "Data.ByDate",
-				typeName:    "ByDate",
-				keyTypeName: "Date",
+				typeId: identifier{
+					moduleName: "Data.ByDate",
+					name:       "ByDate",
+				},
+				publicKeyId: identifier{
+					moduleName: "Calendar",
+					name:       "Date",
+				},
+				privateKeyId: identifier{
+					name: "String",
+				},
 			},
 		},
 	}
