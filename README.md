@@ -4,4 +4,4 @@ Install the compiler:
 
 Run:
 
-- `go run gen-elm-wrappers.go`
+- `go run .`
