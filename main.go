@@ -2,42 +2,6 @@ package main
 
 import "fmt"
 
-type identifier struct {
-	moduleName string
-	name       string
-}
-
-func (id identifier) importLine() string {
-	if id.moduleName == "" {
-		return ""
-	}
-	return "import " + id.moduleName
-}
-
-type module interface {
-	name() string
-	source() []string
-}
-
-type dictModule struct {
-	typeId       identifier
-	publicKeyId  identifier
-	privateKeyId identifier
-}
-
-func (module dictModule) name() string {
-	return module.typeId.moduleName
-}
-
-func (module dictModule) source() []string {
-	return []string{
-		"module " + module.typeId.moduleName + " exposing (..)",
-		module.typeId.importLine(),
-		module.publicKeyId.importLine(),
-		module.privateKeyId.importLine(),
-	}
-}
-
 func writeModule(path string, module module) {
 	fmt.Println("Writing module", module.name(), "to", path)
 	lines := append(
@@ -51,33 +15,6 @@ func writeModule(path string, module module) {
 	for _, line := range lines {
 		fmt.Println(line)
 	}
-}
-
-type config struct {
-	path    string
-	modules []module
-}
-
-func readConfig() config {
-	conf := config{
-		path: "src",
-		modules: []module{
-			dictModule{
-				typeId: identifier{
-					moduleName: "Data.ByDate",
-					name:       "ByDate",
-				},
-				publicKeyId: identifier{
-					moduleName: "Calendar",
-					name:       "Date",
-				},
-				privateKeyId: identifier{
-					name: "String",
-				},
-			},
-		},
-	}
-	return conf
 }
 
 func main() {
