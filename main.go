@@ -1,8 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 
-func writeModule(path string, module module) {
+func writeModule(path string, module module) error {
 	fmt.Println("Writing module", module.name(), "to", path)
 	lines := append(
 		[]string{
@@ -12,15 +16,15 @@ func writeModule(path string, module module) {
 		},
 		module.source()...,
 	)
-	for _, line := range lines {
-		fmt.Println(line)
-	}
+	text := strings.Join(lines, "\n") + "\n"
+	return os.WriteFile(path, []byte(text), 0666)
 }
 
 func main() {
 	var conf = readConfig()
 
 	for _, module := range conf.modules {
+		// DAVE: handle error from writeModule()
 		writeModule(conf.path, module)
 	}
 }
