@@ -37,10 +37,21 @@ func emptyDictDef(wrapperType identifier, publicKeyId identifier) definition {
 	}
 }
 
+func singletonDictDef(wrapperType identifier, publicKeyId identifier) definition {
+	return definition{
+		export: []string{"singleton"},
+		source: []string{
+			"singleton : " + publicKeyId.fullName() + " -> v -> " + wrapperType.name + " v",
+			"singleton k v = " + wrapperType.name + " (Dict.singleton k v)", // DAVE: transform k
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		dictDef(module.typeId, module.privateKeyId),
 		emptyDictDef(module.typeId, module.publicKeyId),
+		singletonDictDef(module.typeId, module.publicKeyId),
 	}
 
 	lines := []string{
