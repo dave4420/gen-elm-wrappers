@@ -56,9 +56,10 @@ func (module dictModule) source() []string {
 
 	lines := []string{
 		"module " + module.wrapperType.moduleName + " exposing (..)",
-		module.wrapperType.importLine(),
 		module.publicKeyType.importLine(),
 		module.privateKeyType.importLine(),
+		module.wrapKeyFn.importLine(),
+		module.unwrapKeyFn.importLine(),
 	}
 
 	for _, def := range definitions {
