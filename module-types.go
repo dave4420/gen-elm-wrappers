@@ -11,7 +11,9 @@ type module interface {
 }
 
 type dictModule struct {
-	typeId       identifier
-	publicKeyId  identifier
-	privateKeyId identifier
+	wrapperType    identifier
+	publicKeyType  identifier
+	privateKeyType identifier
+	wrapKeyFn      identifier
+	unwrapKeyFn    identifier
 }

@@ -3,7 +3,7 @@ package main
 import "strings"
 
 func (module dictModule) name() string {
-	return module.typeId.moduleName
+	return module.wrapperType.moduleName
 }
 
 func dictDef(wrapperType identifier, privateKeyId identifier) definition {
@@ -37,28 +37,28 @@ func emptyDictDef(wrapperType identifier, publicKeyId identifier) definition {
 	}
 }
 
-func singletonDictDef(wrapperType identifier, publicKeyId identifier) definition {
+func singletonDictDef(wrapperType identifier, publicKeyId identifier, unwrapKeyFn identifier) definition {
 	return definition{
 		export: []string{"singleton"},
 		source: []string{
 			"singleton : " + publicKeyId.fullName() + " -> v -> " + wrapperType.name + " v",
-			"singleton k v = " + wrapperType.name + " (Dict.singleton k v)", // DAVE: transform k
+			"singleton k v = " + wrapperType.name + " (Dict.singleton (" + unwrapKeyFn.fullName() + " k) v)",
 		},
 	}
 }
 
 func (module dictModule) source() []string {
 	definitions := []definition{
-		dictDef(module.typeId, module.privateKeyId),
-		emptyDictDef(module.typeId, module.publicKeyId),
-		singletonDictDef(module.typeId, module.publicKeyId),
+		dictDef(module.wrapperType, module.privateKeyType),
+		emptyDictDef(module.wrapperType, module.publicKeyType),
+		singletonDictDef(module.wrapperType, module.publicKeyType, module.unwrapKeyFn),
 	}
 
 	lines := []string{
-		"module " + module.typeId.moduleName + " exposing (..)",
-		module.typeId.importLine(),
-		module.publicKeyId.importLine(),
-		module.privateKeyId.importLine(),
+		"module " + module.wrapperType.moduleName + " exposing (..)",
+		module.wrapperType.importLine(),
+		module.publicKeyType.importLine(),
+		module.privateKeyType.importLine(),
 	}
 
 	for _, def := range definitions {

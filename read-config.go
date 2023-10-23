@@ -5,16 +5,24 @@ func readConfig() config {
 		path: "src",
 		modules: []module{
 			dictModule{
-				typeId: identifier{
+				wrapperType: identifier{
 					moduleName: "Data.ByDate",
 					name:       "ByDate",
 				},
-				publicKeyId: identifier{
+				publicKeyType: identifier{
 					moduleName: "Calendar",
 					name:       "Date",
 				},
-				privateKeyId: identifier{
+				privateKeyType: identifier{
 					name: "String",
+				},
+				wrapKeyFn: identifier{
+					moduleName: "Data.Date",
+					name:       "maybeDateFromIsoString",
+				},
+				unwrapKeyFn: identifier{
+					moduleName: "Data.Date",
+					name:       "isoStringFromDate",
 				},
 			},
 		},
