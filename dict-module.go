@@ -67,6 +67,16 @@ func (module dictModule) updateDictDef() definition {
 	}
 }
 
+func (module dictModule) removeDictDef() definition {
+	return definition{
+		localName: "remove",
+		source: []string{
+			"remove : " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"remove k (" + module.wrapperType.name + " d) = " + module.wrapperType.name + " (Dict.remove (" + module.unwrapKeyFn.fullName() + " k) d)",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -74,6 +84,7 @@ func (module dictModule) source() []string {
 		module.singletonDictDef(),
 		module.insertDictDef(),
 		module.updateDictDef(),
+		module.removeDictDef(),
 	}
 
 	exports := []string{}
