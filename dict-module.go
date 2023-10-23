@@ -47,11 +47,22 @@ func (module dictModule) singletonDictDef() definition {
 	}
 }
 
+func (module dictModule) insertDictDef() definition {
+	return definition{
+		localName: "insert",
+		source: []string{
+			"insert : " + module.publicKeyType.fullName() + " -> v -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"insert k v (" + module.wrapperType.name + " d) = " + module.wrapperType.name + " (Dict.insert (" + module.unwrapKeyFn.fullName() + " k) v d)",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
 		module.emptyDictDef(),
 		module.singletonDictDef(),
+		module.insertDictDef(),
 	}
 
 	exports := []string{}
