@@ -27,9 +27,20 @@ func dictDef(wrapperType identifier, privateKeyId identifier) definition {
 	}
 }
 
+func emptyDictDef(wrapperType identifier, publicKeyId identifier) definition {
+	return definition{
+		export: []string{"empty"},
+		source: []string{
+			"empty : " + wrapperType.name + " a",
+			"empty = " + wrapperType.name + " Dict.empty",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		dictDef(module.typeId, module.privateKeyId),
+		emptyDictDef(module.typeId, module.publicKeyId),
 	}
 
 	lines := []string{
