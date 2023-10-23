@@ -8,7 +8,7 @@ func (module dictModule) name() string {
 
 func dictDef(wrapperType identifier, privateKeyId identifier) definition {
 	return definition{
-		export: []string{wrapperType.name},
+		localName: wrapperType.name,
 		source: []string{
 			strings.Join(
 				[]string{
@@ -29,7 +29,7 @@ func dictDef(wrapperType identifier, privateKeyId identifier) definition {
 
 func emptyDictDef(wrapperType identifier, publicKeyId identifier) definition {
 	return definition{
-		export: []string{"empty"},
+		localName: "empty",
 		source: []string{
 			"empty : " + wrapperType.name + " a",
 			"empty = " + wrapperType.name + " Dict.empty",
@@ -39,7 +39,7 @@ func emptyDictDef(wrapperType identifier, publicKeyId identifier) definition {
 
 func singletonDictDef(wrapperType identifier, publicKeyId identifier, unwrapKeyFn identifier) definition {
 	return definition{
-		export: []string{"singleton"},
+		localName: "singleton",
 		source: []string{
 			"singleton : " + publicKeyId.fullName() + " -> v -> " + wrapperType.name + " v",
 			"singleton k v = " + wrapperType.name + " (Dict.singleton (" + unwrapKeyFn.fullName() + " k) v)",
@@ -54,8 +54,13 @@ func (module dictModule) source() []string {
 		singletonDictDef(module.wrapperType, module.publicKeyType, module.unwrapKeyFn),
 	}
 
+	exports := []string{}
+	for _, export := range definitions {
+		exports = append(exports, export.localName)
+	}
+
 	lines := []string{
-		"module " + module.wrapperType.moduleName + " exposing (..)",
+		"module " + module.wrapperType.moduleName + " exposing (" + strings.Join(exports, ", ") + ")",
 		module.publicKeyType.importLine(),
 		module.privateKeyType.importLine(),
 		module.wrapKeyFn.importLine(),
