@@ -77,6 +77,46 @@ func (module dictModule) removeDictDef() definition {
 	}
 }
 
+func (module dictModule) isEmptyDictDef() definition {
+	return definition{
+		localName: "isEmpty",
+		source: []string{
+			"isEmpty : " + module.wrapperType.name + " v -> Bool",
+			"isEmpty (" + module.wrapperType.name + " d) = Dict.isEmpty d",
+		},
+	}
+}
+
+func (module dictModule) memberDictDef() definition {
+	return definition{
+		localName: "member",
+		source: []string{
+			"member : " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " v -> Bool",
+			"member k (" + module.wrapperType.name + " d) = Dict.member (" + module.unwrapKeyFn.fullName() + " k) d",
+		},
+	}
+}
+
+func (module dictModule) getDictDef() definition {
+	return definition{
+		localName: "get",
+		source: []string{
+			"get : " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " v -> Maybe v",
+			"get k (" + module.wrapperType.name + " d) = Dict.get (" + module.unwrapKeyFn.fullName() + " k) d",
+		},
+	}
+}
+
+func (module dictModule) sizeDictDef() definition {
+	return definition{
+		localName: "size",
+		source: []string{
+			"size : " + module.wrapperType.name + " v -> Int",
+			"size (" + module.wrapperType.name + " d) = Dict.size d",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -85,6 +125,10 @@ func (module dictModule) source() []string {
 		module.insertDictDef(),
 		module.updateDictDef(),
 		module.removeDictDef(),
+		module.isEmptyDictDef(),
+		module.memberDictDef(),
+		module.getDictDef(),
+		module.sizeDictDef(),
 	}
 
 	exports := []string{}
