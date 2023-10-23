@@ -57,12 +57,23 @@ func (module dictModule) insertDictDef() definition {
 	}
 }
 
+func (module dictModule) updateDictDef() definition {
+	return definition{
+		localName: "update",
+		source: []string{
+			"update : " + module.publicKeyType.fullName() + " -> (Maybe v -> Maybe v) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"update k f (" + module.wrapperType.name + " d) = " + module.wrapperType.name + " (Dict.update (" + module.unwrapKeyFn.fullName() + " k) f d)",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
 		module.emptyDictDef(),
 		module.singletonDictDef(),
 		module.insertDictDef(),
+		module.updateDictDef(),
 	}
 
 	exports := []string{}
