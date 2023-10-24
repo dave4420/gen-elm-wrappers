@@ -8,8 +8,9 @@ import (
 )
 
 func writeModule(basePath string, module module) error {
-	// DAVE: split module name
-	path := strings.Join([]string{basePath, module.name()}, string(filepath.Separator)) + ".elm"
+	pathSegments := []string{basePath}
+	pathSegments = append(pathSegments, strings.Split(module.name(), ".")...)
+	path := strings.Join(pathSegments, string(filepath.Separator)) + ".elm"
 	fmt.Println("Writing module", module.name(), "to", path)
 	dir, _ := filepath.Split(path)
 	err := os.MkdirAll(dir, 0777)
