@@ -117,6 +117,50 @@ func (module dictModule) sizeDictDef() definition {
 	}
 }
 
+func (module dictModule) keysDictDef() definition {
+	return definition{
+		localName: "keys",
+		source: []string{
+			"keys : " + module.wrapperType.name + " v -> List " + module.publicKeyType.fullName(),
+			"keys (" + module.wrapperType.name + " d) = Dict.keys d |> List.filterMap " + module.wrapKeyFn.fullName(),
+		},
+	}
+}
+
+func (module dictModule) valuesDictDef() definition {
+	return definition{
+		localName: "values",
+		source: []string{
+			"values : " + module.wrapperType.name + " v -> List v",
+			"values (" + module.wrapperType.name + " d) = Dict.values d",
+		},
+	}
+}
+
+func (module dictModule) toListDictDef() definition {
+	return definition{
+		localName: "toList",
+		source: []string{
+			"toList : " + module.wrapperType.name + " v -> List (" + module.publicKeyType.fullName() + ", v)",
+			"toList (" + module.wrapperType.name + " d) = Dict.toList d |> List.filterMap (\\(k, v) ->",
+			"    case " + module.wrapKeyFn.fullName() + " k of",
+			"      Just kk -> Just (kk, v)",
+			"      Nothing -> Nothing",
+			"  )",
+		},
+	}
+}
+
+func (module dictModule) fromListDictDef() definition {
+	return definition{
+		localName: "fromList",
+		source: []string{
+			"fromList : List (" + module.publicKeyType.fullName() + ", v) -> " + module.wrapperType.name + " v",
+			"fromList l = " + module.wrapperType.name + " (Dict.fromList (List.map (Tuple.mapFirst " + module.unwrapKeyFn.fullName() + ") l))",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -129,6 +173,10 @@ func (module dictModule) source() []string {
 		module.memberDictDef(),
 		module.getDictDef(),
 		module.sizeDictDef(),
+		module.keysDictDef(),
+		module.valuesDictDef(),
+		module.toListDictDef(),
+		module.fromListDictDef(),
 	}
 
 	exports := []string{}
