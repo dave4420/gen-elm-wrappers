@@ -37,6 +37,7 @@ mkdir src
 cat >src/Main.elm <<EOF
 module Main exposing (main)
 import Type.DictInt
+main : Program () () Never
 main = Debug.todo "main"
 EOF
 

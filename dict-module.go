@@ -138,6 +138,7 @@ func (module dictModule) source() []string {
 
 	lines := []string{
 		"module " + module.wrapperType.moduleName + " exposing (" + strings.Join(exports, ", ") + ")",
+		"import Dict exposing (Dict)",
 		module.publicKeyType.importLine(),
 		module.privateKeyType.importLine(),
 		module.wrapKeyFn.importLine(),

@@ -17,11 +17,11 @@ func readConfig() config {
 				},
 				wrapKeyFn: identifier{
 					moduleName: "String",
-					name:       "fromInt",
+					name:       "toInt",
 				},
 				unwrapKeyFn: identifier{
 					moduleName: "String",
-					name:       "toInt",
+					name:       "fromInt",
 				},
 			},
 		},
