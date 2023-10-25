@@ -161,6 +161,21 @@ func (module dictModule) fromListDictDef() definition {
 	}
 }
 
+func (module dictModule) mapDictDef() definition {
+	return definition{
+		localName: "map",
+		source: []string{
+			"map : (" + module.publicKeyType.name + " -> v -> w) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " w",
+			"map f (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k v dd = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> dd",
+			"      Just kk -> insert kk (f kk v) dd",
+			"  in Dict.foldl g empty d",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -177,6 +192,7 @@ func (module dictModule) source() []string {
 		module.valuesDictDef(),
 		module.toListDictDef(),
 		module.fromListDictDef(),
+		module.mapDictDef(),
 	}
 
 	exports := []string{}
