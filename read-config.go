@@ -6,23 +6,22 @@ func readConfig() config {
 		modules: []module{
 			dictModule{
 				wrapperType: identifier{
-					moduleName: "Data.ByDate",
-					name:       "ByDate",
+					moduleName: "Type.DictInt",
+					name:       "DictInt",
 				},
 				publicKeyType: identifier{
-					moduleName: "Calendar",
-					name:       "Date",
+					name: "Int",
 				},
 				privateKeyType: identifier{
 					name: "String",
 				},
 				wrapKeyFn: identifier{
-					moduleName: "Data.Date",
-					name:       "maybeDateFromIsoString",
+					moduleName: "String",
+					name:       "fromInt",
 				},
 				unwrapKeyFn: identifier{
-					moduleName: "Data.Date",
-					name:       "isoStringFromDate",
+					moduleName: "String",
+					name:       "toInt",
 				},
 			},
 		},

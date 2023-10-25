@@ -14,7 +14,21 @@ cat >elm.json <<EOF
     "source-directories": [
         "src"
     ],
-    "elm-version": "0.19.1"
+    "elm-version": "0.19.1",
+    "dependencies": {
+        "direct": {
+            "elm/core": "1.0.5",
+            "elm/json": "1.1.3"
+        },
+        "indirect": {
+        }
+    },
+    "test-dependencies": {
+        "direct": {
+        },
+        "indirect": {
+        }
+    }
 }
 EOF
 
@@ -22,7 +36,7 @@ mkdir src
 
 cat >src/Main.elm <<EOF
 module Main exposing (main)
-import Data.ByDate
+import Type.DictInt
 main = Debug.todo "main"
 EOF
 
