@@ -176,6 +176,36 @@ func (module dictModule) mapDictDef() definition {
 	}
 }
 
+func (module dictModule) foldlDictDef() definition {
+	return definition{
+		localName: "foldl",
+		source: []string{
+			"foldl : (" + module.publicKeyType.name + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
+			"foldl f z (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k v acc = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> acc",
+			"      Just kk -> f kk v acc",
+			"  in Dict.foldl g z d",
+		},
+	}
+}
+
+func (module dictModule) foldrDictDef() definition {
+	return definition{
+		localName: "foldr",
+		source: []string{
+			"foldr : (" + module.publicKeyType.name + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
+			"foldr f z (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k v acc = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> acc",
+			"      Just kk -> f kk v acc",
+			"  in Dict.foldr g z d",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -193,6 +223,8 @@ func (module dictModule) source() []string {
 		module.toListDictDef(),
 		module.fromListDictDef(),
 		module.mapDictDef(),
+		module.foldlDictDef(),
+		module.foldrDictDef(),
 	}
 
 	exports := []string{}
