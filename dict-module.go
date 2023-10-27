@@ -204,6 +204,40 @@ func (module dictModule) foldrDictDef() definition {
 	}
 }
 
+func (module dictModule) filterDictDef() definition {
+	return definition{
+		localName: "filter",
+		source: []string{
+			"filter : (" + module.publicKeyType.name + " -> v -> Bool) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"filter f (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k v =",
+			"      " + module.wrapKeyFn.fullName() + " k",
+			"        |> Maybe.map (\\kk -> f kk v)",
+			"        |> Maybe.withDefault False",
+			"  in",
+			"    " + module.wrapperType.name + " (Dict.filter g d)",
+		},
+	}
+}
+
+func (module dictModule) partitionDictDef() definition {
+	return definition{
+		localName: "partition",
+		source: []string{
+			"partition : (" + module.publicKeyType.name + " -> v -> Bool) -> " + module.wrapperType.name + " v -> (" + module.wrapperType.name + " v, " + module.wrapperType.name + " v)",
+			"partition f (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k v =",
+			"      " + module.wrapKeyFn.fullName() + " k",
+			"        |> Maybe.map (\\kk -> f kk v)",
+			"        |> Maybe.withDefault False",
+			"  in",
+			"    Tuple.mapBoth " + module.wrapperType.name + " " + module.wrapperType.name + " (Dict.partition g d)",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -223,6 +257,8 @@ func (module dictModule) source() []string {
 		module.mapDictDef(),
 		module.foldlDictDef(),
 		module.foldrDictDef(),
+		module.filterDictDef(),
+		module.partitionDictDef(),
 	}
 
 	exports := []string{}
