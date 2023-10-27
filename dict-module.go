@@ -166,12 +166,10 @@ func (module dictModule) mapDictDef() definition {
 		localName: "map",
 		source: []string{
 			"map : (" + module.publicKeyType.name + " -> v -> w) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " w",
-			"map f (" + module.wrapperType.name + " d) = ",
+			"map f d = ",
 			"  let",
-			"    g k v dd = case " + module.wrapKeyFn.fullName() + " k of",
-			"      Nothing -> dd",
-			"      Just kk -> insert kk (f kk v) dd",
-			"  in Dict.foldl g empty d",
+			"    g k v dd = insert k (f k v) dd",
+			"  in foldl g empty d",
 		},
 	}
 }
