@@ -238,6 +238,62 @@ func (module dictModule) partitionDictDef() definition {
 	}
 }
 
+func (module dictModule) unionDictDef() definition {
+	return definition{
+		localName: "union",
+		source: []string{
+			"union : " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"union (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Dict.union d1 d2)",
+		},
+	}
+}
+
+func (module dictModule) intersectDictDef() definition {
+	return definition{
+		localName: "intersect",
+		source: []string{
+			"intersect : " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"intersect (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Dict.intersect d1 d2)",
+		},
+	}
+}
+
+func (module dictModule) diffDictDef() definition {
+	return definition{
+		localName: "diff",
+		source: []string{
+			"diff : " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"diff (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Dict.diff d1 d2)",
+		},
+	}
+}
+
+func (module dictModule) mergeDictDef() definition {
+	return definition{
+		localName: "merge",
+		source: []string{
+			"merge :",
+			"  (" + module.publicKeyType.fullName() + " -> a -> result -> result)",
+			"  -> (" + module.publicKeyType.fullName() + " -> a -> b -> result -> result)",
+			"  -> (" + module.publicKeyType.fullName() + " -> b -> result -> result)",
+			"  -> " + module.wrapperType.name + " a",
+			"  -> " + module.wrapperType.name + " b",
+			"  -> result",
+			"  -> result",
+			"merge f1 f2 f3 (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) z =",
+			"  let",
+			"    wrap f k v = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Just kk -> f kk v",
+			"      Nothing -> identity",
+			"    wrap2 f k v w = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Just kk -> f kk v w",
+			"      Nothing -> identity",
+			"  in",
+			"  Dict.merge (wrap f1) (wrap2 f2) (wrap f3) d1 d2 z",
+		},
+	}
+}
+
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
@@ -259,6 +315,10 @@ func (module dictModule) source() []string {
 		module.foldrDictDef(),
 		module.filterDictDef(),
 		module.partitionDictDef(),
+		module.unionDictDef(),
+		module.intersectDictDef(),
+		module.diffDictDef(),
+		module.mergeDictDef(),
 	}
 
 	exports := []string{}
