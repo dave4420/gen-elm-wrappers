@@ -3,7 +3,7 @@ set -euo pipefail
 
 rm -rf test
 
-go build .
+go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src
 
 mkdir test
 cd test
