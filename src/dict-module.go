@@ -27,7 +27,7 @@ func (module dictModule) dictDef() definition {
 	}
 }
 
-func (module dictModule) emptyDictDef() definition {
+func (module dictModule) emptyDef() definition {
 	return definition{
 		localName: "empty",
 		source: []string{
@@ -37,7 +37,7 @@ func (module dictModule) emptyDictDef() definition {
 	}
 }
 
-func (module dictModule) singletonDictDef() definition {
+func (module dictModule) singletonDef() definition {
 	return definition{
 		localName: "singleton",
 		source: []string{
@@ -47,7 +47,7 @@ func (module dictModule) singletonDictDef() definition {
 	}
 }
 
-func (module dictModule) insertDictDef() definition {
+func (module dictModule) insertDef() definition {
 	return definition{
 		localName: "insert",
 		source: []string{
@@ -57,7 +57,7 @@ func (module dictModule) insertDictDef() definition {
 	}
 }
 
-func (module dictModule) updateDictDef() definition {
+func (module dictModule) updateDef() definition {
 	return definition{
 		localName: "update",
 		source: []string{
@@ -67,7 +67,7 @@ func (module dictModule) updateDictDef() definition {
 	}
 }
 
-func (module dictModule) removeDictDef() definition {
+func (module dictModule) removeDef() definition {
 	return definition{
 		localName: "remove",
 		source: []string{
@@ -77,7 +77,7 @@ func (module dictModule) removeDictDef() definition {
 	}
 }
 
-func (module dictModule) isEmptyDictDef() definition {
+func (module dictModule) isEmptyDef() definition {
 	return definition{
 		localName: "isEmpty",
 		source: []string{
@@ -87,7 +87,7 @@ func (module dictModule) isEmptyDictDef() definition {
 	}
 }
 
-func (module dictModule) memberDictDef() definition {
+func (module dictModule) memberDef() definition {
 	return definition{
 		localName: "member",
 		source: []string{
@@ -97,7 +97,7 @@ func (module dictModule) memberDictDef() definition {
 	}
 }
 
-func (module dictModule) getDictDef() definition {
+func (module dictModule) getDef() definition {
 	return definition{
 		localName: "get",
 		source: []string{
@@ -107,7 +107,7 @@ func (module dictModule) getDictDef() definition {
 	}
 }
 
-func (module dictModule) sizeDictDef() definition {
+func (module dictModule) sizeDef() definition {
 	return definition{
 		localName: "size",
 		source: []string{
@@ -117,7 +117,7 @@ func (module dictModule) sizeDictDef() definition {
 	}
 }
 
-func (module dictModule) keysDictDef() definition {
+func (module dictModule) keysDef() definition {
 	return definition{
 		localName: "keys",
 		source: []string{
@@ -127,7 +127,7 @@ func (module dictModule) keysDictDef() definition {
 	}
 }
 
-func (module dictModule) valuesDictDef() definition {
+func (module dictModule) valuesDef() definition {
 	return definition{
 		localName: "values",
 		source: []string{
@@ -137,7 +137,7 @@ func (module dictModule) valuesDictDef() definition {
 	}
 }
 
-func (module dictModule) toListDictDef() definition {
+func (module dictModule) toListDef() definition {
 	return definition{
 		localName: "toList",
 		source: []string{
@@ -151,7 +151,7 @@ func (module dictModule) toListDictDef() definition {
 	}
 }
 
-func (module dictModule) fromListDictDef() definition {
+func (module dictModule) fromListDef() definition {
 	return definition{
 		localName: "fromList",
 		source: []string{
@@ -161,7 +161,7 @@ func (module dictModule) fromListDictDef() definition {
 	}
 }
 
-func (module dictModule) mapDictDef() definition {
+func (module dictModule) mapDef() definition {
 	return definition{
 		localName: "map",
 		source: []string{
@@ -174,7 +174,7 @@ func (module dictModule) mapDictDef() definition {
 	}
 }
 
-func (module dictModule) foldlDictDef() definition {
+func (module dictModule) foldlDef() definition {
 	return definition{
 		localName: "foldl",
 		source: []string{
@@ -189,7 +189,7 @@ func (module dictModule) foldlDictDef() definition {
 	}
 }
 
-func (module dictModule) foldrDictDef() definition {
+func (module dictModule) foldrDef() definition {
 	return definition{
 		localName: "foldr",
 		source: []string{
@@ -204,7 +204,7 @@ func (module dictModule) foldrDictDef() definition {
 	}
 }
 
-func (module dictModule) filterDictDef() definition {
+func (module dictModule) filterDef() definition {
 	return definition{
 		localName: "filter",
 		source: []string{
@@ -221,7 +221,7 @@ func (module dictModule) filterDictDef() definition {
 	}
 }
 
-func (module dictModule) partitionDictDef() definition {
+func (module dictModule) partitionDef() definition {
 	return definition{
 		localName: "partition",
 		source: []string{
@@ -238,7 +238,7 @@ func (module dictModule) partitionDictDef() definition {
 	}
 }
 
-func (module dictModule) unionDictDef() definition {
+func (module dictModule) unionDef() definition {
 	return definition{
 		localName: "union",
 		source: []string{
@@ -248,7 +248,7 @@ func (module dictModule) unionDictDef() definition {
 	}
 }
 
-func (module dictModule) intersectDictDef() definition {
+func (module dictModule) intersectDef() definition {
 	return definition{
 		localName: "intersect",
 		source: []string{
@@ -258,7 +258,7 @@ func (module dictModule) intersectDictDef() definition {
 	}
 }
 
-func (module dictModule) diffDictDef() definition {
+func (module dictModule) diffDef() definition {
 	return definition{
 		localName: "diff",
 		source: []string{
@@ -268,7 +268,7 @@ func (module dictModule) diffDictDef() definition {
 	}
 }
 
-func (module dictModule) mergeDictDef() definition {
+func (module dictModule) mergeDef() definition {
 	return definition{
 		localName: "merge",
 		source: []string{
@@ -297,28 +297,28 @@ func (module dictModule) mergeDictDef() definition {
 func (module dictModule) source() []string {
 	definitions := []definition{
 		module.dictDef(),
-		module.emptyDictDef(),
-		module.singletonDictDef(),
-		module.insertDictDef(),
-		module.updateDictDef(),
-		module.removeDictDef(),
-		module.isEmptyDictDef(),
-		module.memberDictDef(),
-		module.getDictDef(),
-		module.sizeDictDef(),
-		module.keysDictDef(),
-		module.valuesDictDef(),
-		module.toListDictDef(),
-		module.fromListDictDef(),
-		module.mapDictDef(),
-		module.foldlDictDef(),
-		module.foldrDictDef(),
-		module.filterDictDef(),
-		module.partitionDictDef(),
-		module.unionDictDef(),
-		module.intersectDictDef(),
-		module.diffDictDef(),
-		module.mergeDictDef(),
+		module.emptyDef(),
+		module.singletonDef(),
+		module.insertDef(),
+		module.updateDef(),
+		module.removeDef(),
+		module.isEmptyDef(),
+		module.memberDef(),
+		module.getDef(),
+		module.sizeDef(),
+		module.keysDef(),
+		module.valuesDef(),
+		module.toListDef(),
+		module.fromListDef(),
+		module.mapDef(),
+		module.foldlDef(),
+		module.foldrDef(),
+		module.filterDef(),
+		module.partitionDef(),
+		module.unionDef(),
+		module.intersectDef(),
+		module.diffDef(),
+		module.mergeDef(),
 	}
 
 	exports := []string{}
