@@ -8,6 +8,9 @@ func (module dictModule) extraDefs() []definition {
 		module.groupByDef(),
 		module.filterGroupByDef(),
 		module.fromListByDef(),
+		module.fromListDedupeDef(),
+		module.fromListDedupeByDef(),
+		module.frequenciesDef(),
 	}
 }
 
@@ -39,6 +42,36 @@ func (module dictModule) fromListByDef() definition {
 		source: []string{
 			"fromListBy : (a -> " + module.publicKeyType.fullName() + ") -> List a -> " + module.wrapperType.name + " a",
 			"fromListBy f xs = " + module.wrapperType.name + " (Dict.Extra.fromListBy (\\x -> " + module.unwrapKeyFn.fullName() + " (f x)) xs)",
+		},
+	}
+}
+
+func (module dictModule) fromListDedupeDef() definition {
+	return definition{
+		localName: "fromListDedupe",
+		source: []string{
+			"fromListDedupe : (a -> a -> a) -> List (" + module.publicKeyType.fullName() + ", a) -> " + module.wrapperType.name + " a",
+			"fromListDedupe f xs = " + module.wrapperType.name + " (Dict.Extra.fromListDedupe f (List.map (Tuple.mapFirst " + module.unwrapKeyFn.fullName() + ") xs))",
+		},
+	}
+}
+
+func (module dictModule) fromListDedupeByDef() definition {
+	return definition{
+		localName: "fromListDedupeBy",
+		source: []string{
+			"fromListDedupeBy : (a -> a -> a) -> (a -> " + module.publicKeyType.fullName() + ") -> List a -> " + module.wrapperType.name + " a",
+			"fromListDedupeBy f g xs = " + module.wrapperType.name + " (Dict.Extra.fromListDedupeBy f (g >> " + module.unwrapKeyFn.fullName() + ") xs)",
+		},
+	}
+}
+
+func (module dictModule) frequenciesDef() definition {
+	return definition{
+		localName: "frequencies",
+		source: []string{
+			"frequencies : List " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " Int",
+			"frequencies = List.map " + module.unwrapKeyFn.fullName() + " >> Dict.Extra.frequencies >> " + module.wrapperType.name,
 		},
 	}
 }
