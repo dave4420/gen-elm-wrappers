@@ -52,13 +52,11 @@ func decodeConfig(root interface{}) (config, error) {
 	}
 
 	var dictExtraVersion interface{}
-	dictExtraVersion, ok = directObject["elm-community/dict-extra"]
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies']['direct']['elm-community/dict-extra'] not found")
-	}
-
 	var dictExtraVersionString string
-	dictExtraVersionString, ok = dictExtraVersion.(string)
+	dictExtraVersion, ok = directObject["elm-community/dict-extra"]
+	if ok {
+		dictExtraVersionString, ok = dictExtraVersion.(string)
+	}
 	if !ok {
 		dictExtraVersionString = ""
 	}
