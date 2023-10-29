@@ -14,6 +14,8 @@ func (module dictModule) extraDefs() []definition {
 		module.removeWhenDef(),
 		module.insertDedupeDef(),
 		module.filterMapDef(),
+		module.anyDef(),
+		module.findDef(),
 	}
 }
 
@@ -129,3 +131,40 @@ func (module dictModule) filterMapDef() definition {
 }
 
 // DAVE: handle variations of invert
+
+// Utilities
+
+func (module dictModule) anyDef() definition {
+	return definition{
+		localName: "any",
+		source: []string{
+			"any : (" + module.publicKeyType.fullName() + " -> v -> Bool) -> " + module.wrapperType.name + " v -> Bool",
+			"any f (" + module.wrapperType.name + " d) =",
+			"  let",
+			"    g k v = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> False",
+			"      Just kk -> f kk v",
+			"  in",
+			"  Dict.Extra.any g d",
+		},
+	}
+}
+
+func (module dictModule) findDef() definition {
+	return definition{
+		localName: "find",
+		source: []string{
+			"find : (" + module.publicKeyType.fullName() + " -> v -> Bool) -> " + module.wrapperType.name + " v -> Maybe (" + module.publicKeyType.fullName() + ", v)",
+			"find f (" + module.wrapperType.name + " d) =",
+			"  let",
+			"    g kk v = case " + module.wrapKeyFn.fullName() + " kk of",
+			"      Nothing -> False",
+			"      Just k -> f k v",
+			"    h (kk, v) = case " + module.wrapKeyFn.fullName() + " kk of",
+			"      Nothing -> Nothing",
+			"      Just k -> Just (k, v)",
+			"  in",
+			"  Dict.Extra.find g d |> Maybe.andThen h",
+		},
+	}
+}
