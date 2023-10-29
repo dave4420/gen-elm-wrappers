@@ -30,7 +30,8 @@ func writeModule(basePath string, module module) error {
 }
 
 func main() {
-	var conf = readConfig()
+	conf, _ := readConfig()
+	// DAVE: handle error from readConfig()
 
 	for _, module := range conf.modules {
 		// DAVE: handle error from writeModule()
