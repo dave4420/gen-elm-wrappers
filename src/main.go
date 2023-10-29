@@ -30,11 +30,17 @@ func writeModule(basePath string, module module) error {
 }
 
 func main() {
-	conf, _ := readConfig()
-	// DAVE: handle error from readConfig()
+	conf, err := readConfig()
+	if err != nil {
+		// DAVE: don't panic! print to stderr and exit instead
+		panic(err)
+	}
 
 	for _, module := range conf.modules {
-		// DAVE: handle error from writeModule()
-		writeModule(conf.path, module)
+		err := writeModule(conf.path, module)
+		if err != nil {
+			// DAVE: don't panic! print to stderr and exit instead
+			panic(err)
+		}
 	}
 }
