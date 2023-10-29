@@ -9,6 +9,7 @@ func (module dictModule) name() string {
 func (module dictModule) source() []string {
 	definitions := []definition{}
 	definitions = append(definitions, module.coreDefs()...)
+	definitions = append(definitions, module.extraDefs()...)
 
 	exports := []string{}
 	for _, export := range definitions {
