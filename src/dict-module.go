@@ -16,9 +16,15 @@ func (module dictModule) source() []string {
 		exports = append(exports, export.localName)
 	}
 
+	var dictExtraImportLine string
+	if module.dictExtraVersion != "" {
+		dictExtraImportLine = "import Dict.Extra"
+	}
+
 	lines := []string{
 		"module " + module.wrapperType.moduleName + " exposing (" + strings.Join(exports, ", ") + ")",
 		"import Dict exposing (Dict)",
+		dictExtraImportLine,
 		module.publicKeyType.importLine(),
 		module.privateKeyType.importLine(),
 		module.wrapKeyFn.importLine(),
