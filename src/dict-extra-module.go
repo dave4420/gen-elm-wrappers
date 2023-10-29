@@ -1,6 +1,9 @@
 package main
 
 func (module dictModule) extraDefs() []definition {
+	if module.dictExtraVersion == "" {
+		return []definition{}
+	}
 	return []definition{
 		module.groupByDef(),
 	}

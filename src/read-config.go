@@ -83,10 +83,10 @@ func decodeConfig(root interface{}) (config, error) {
 					moduleName: "String",
 					name:       "fromInt",
 				},
+				elmCoreVersion:   elmCoreVersionString,
+				dictExtraVersion: dictExtraVersionString,
 			},
 		},
-		elmCoreVersion:   elmCoreVersionString,
-		dictExtraVersion: dictExtraVersionString,
 	}, nil
 }
 

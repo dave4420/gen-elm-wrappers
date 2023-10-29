@@ -2,25 +2,27 @@
 set -euo pipefail
 
 test_against_elm_json() {
-    printf 'Testing with %s\n' "$1"
+    (
+        printf 'Testing with %s\n' "$1"
 
-    rm -rf test
-    mkdir test
-    cd test
+        rm -rf test
+        mkdir test
+        cd test
 
-    cat >elm.json
+        cat >elm.json
 
-    mkdir src
-    cat >src/Main.elm <<EOF
+        mkdir src
+        cat >src/Main.elm <<EOF
 module Main exposing (main)
 import Type.DictInt
 main : Program () () Never
 main = Debug.todo "main"
 EOF
 
-    ../gen-elm-wrappers
+        ../gen-elm-wrappers
 
-    elm make src/Main.elm --debug
+        elm make src/Main.elm --debug
+    )
 }
 
 go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src

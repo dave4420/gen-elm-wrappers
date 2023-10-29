@@ -11,9 +11,11 @@ type module interface {
 }
 
 type dictModule struct {
-	wrapperType    identifier
-	publicKeyType  identifier
-	privateKeyType identifier
-	wrapKeyFn      identifier
-	unwrapKeyFn    identifier
+	wrapperType      identifier
+	publicKeyType    identifier
+	privateKeyType   identifier
+	wrapKeyFn        identifier
+	unwrapKeyFn      identifier
+	elmCoreVersion   string
+	dictExtraVersion string
 }
