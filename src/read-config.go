@@ -6,31 +6,38 @@ import (
 	"os"
 )
 
-func decodeConfig(root interface{}) (config, error) {
+func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
 	var ok bool
 
-	var rootObject map[string]interface{}
-	rootObject, ok = root.(map[string]interface{})
+	var object map[string]interface{}
+	object, ok = json.(map[string]interface{})
 	if !ok {
-		return config{}, errors.New("elm.json is not an object")
+		return nil, errors.New(path + " is not an object")
 	}
+
+	var property interface{}
+	property, ok = object[propertyName]
+	if !ok {
+		return nil, errors.New(path + "['" + propertyName + "'] not found")
+	}
+
+	return property, nil
+}
+
+func decodeConfig(root interface{}) (config, error) {
+	var ok bool
+	var err error
 
 	var dependencies interface{}
-	dependencies, ok = rootObject["dependencies"]
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies'] not found")
-	}
-
-	var dependenciesObject map[string]interface{}
-	dependenciesObject, ok = dependencies.(map[string]interface{})
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies'] is not an object")
+	dependencies, err = getObjectProperty(root, "elm.json", "dependencies")
+	if err != nil {
+		return config{}, err
 	}
 
 	var direct interface{}
-	direct, ok = dependenciesObject["direct"]
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies']['direct'] not found")
+	direct, err = getObjectProperty(dependencies, "elm.json['dependencies']", "direct")
+	if err != nil {
+		return config{}, err
 	}
 
 	var directObject map[string]interface{}
