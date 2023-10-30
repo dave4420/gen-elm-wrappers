@@ -25,6 +25,7 @@ EOF
     )
 }
 
+go test github.com/dave4420/gen-elm-wrappers/src
 go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src
 
 test_against_elm_json 'core only' <<EOF

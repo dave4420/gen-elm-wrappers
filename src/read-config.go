@@ -90,17 +90,21 @@ func decodeConfig(root interface{}) (config, error) {
 	}, nil
 }
 
+func decodeConfigFromBlob(blob []byte) (config, error) {
+	var root interface{}
+	err := json.Unmarshal(blob, &root)
+	if err != nil {
+		return config{}, err
+	}
+
+	return decodeConfig(root)
+}
+
 func readConfig() (config, error) {
 	blob, err := os.ReadFile("elm.json")
 	if err != nil {
 		return config{}, err
 	}
 
-	var root interface{}
-	err = json.Unmarshal(blob, &root)
-	if err != nil {
-		return config{}, err
-	}
-
-	return decodeConfig(root)
+	return decodeConfigFromBlob(blob)
 }
