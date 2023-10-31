@@ -197,7 +197,7 @@ func (module dictModule) mapDef() definition {
 	return definition{
 		localName: "map",
 		source: []string{
-			"map : (" + module.publicKeyType.name + " -> v -> w) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " w",
+			"map : (" + module.publicKeyType.fullName() + " -> v -> w) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " w",
 			"map f d = ",
 			"  let",
 			"    g k v dd = insert k (f k v) dd",
@@ -210,7 +210,7 @@ func (module dictModule) foldlDef() definition {
 	return definition{
 		localName: "foldl",
 		source: []string{
-			"foldl : (" + module.publicKeyType.name + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
+			"foldl : (" + module.publicKeyType.fullName() + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
 			"foldl f z (" + module.wrapperType.name + " d) = ",
 			"  let",
 			"    g k v acc = case " + module.wrapKeyFn.fullName() + " k of",
@@ -225,7 +225,7 @@ func (module dictModule) foldrDef() definition {
 	return definition{
 		localName: "foldr",
 		source: []string{
-			"foldr : (" + module.publicKeyType.name + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
+			"foldr : (" + module.publicKeyType.fullName() + " -> v -> a -> a) -> a -> " + module.wrapperType.name + " v -> a",
 			"foldr f z (" + module.wrapperType.name + " d) = ",
 			"  let",
 			"    g k v acc = case " + module.wrapKeyFn.fullName() + " k of",
@@ -240,7 +240,7 @@ func (module dictModule) filterDef() definition {
 	return definition{
 		localName: "filter",
 		source: []string{
-			"filter : (" + module.publicKeyType.name + " -> v -> Bool) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
+			"filter : (" + module.publicKeyType.fullName() + " -> v -> Bool) -> " + module.wrapperType.name + " v -> " + module.wrapperType.name + " v",
 			"filter f (" + module.wrapperType.name + " d) = ",
 			"  let",
 			"    g k v =",
@@ -257,7 +257,7 @@ func (module dictModule) partitionDef() definition {
 	return definition{
 		localName: "partition",
 		source: []string{
-			"partition : (" + module.publicKeyType.name + " -> v -> Bool) -> " + module.wrapperType.name + " v -> (" + module.wrapperType.name + " v, " + module.wrapperType.name + " v)",
+			"partition : (" + module.publicKeyType.fullName() + " -> v -> Bool) -> " + module.wrapperType.name + " v -> (" + module.wrapperType.name + " v, " + module.wrapperType.name + " v)",
 			"partition f (" + module.wrapperType.name + " d) = ",
 			"  let",
 			"    g k v =",
