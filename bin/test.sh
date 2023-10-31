@@ -12,9 +12,15 @@ test_against_elm_json() {
         cat >elm.json
 
         mkdir src
+        cat >src/Helpers.elm <<EOF
+module Helpers exposing (..)
+import Time
+maybePosixFromMillis : Int -> Maybe Time.Posix
+maybePosixFromMillis = Time.millisToPosix >> Just
+EOF
         cat >src/Main.elm <<EOF
 module Main exposing (main)
-import Type.DictInt
+import Type.DictTimePosix
 main : Program () () Never
 main = Debug.todo "main"
 EOF
@@ -38,7 +44,8 @@ test_against_elm_json 'core only' <<EOF
     "dependencies": {
         "direct": {
             "elm/core": "1.0.5",
-            "elm/json": "1.1.3"
+            "elm/json": "1.1.3",
+            "elm/time": "1.0.0"
         },
         "indirect": {
         }
@@ -53,11 +60,11 @@ test_against_elm_json 'core only' <<EOF
         "generate": [
             {
                 "underlying-type": "Dict",
-                "wrapper-type": "Type.DictInt.DictInt",
-                "public-key-type": "Int",
-                "private-key-type": "String",
-                "private-key-to-public-key": "String.toInt",
-                "public-key-to-private-key": "String.fromInt"
+                "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+                "public-key-type": "Time.Posix",
+                "private-key-type": "Int",
+                "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+                "public-key-to-private-key": "Time.posixToMillis"
             }
         ]
     }
@@ -75,6 +82,7 @@ test_against_elm_json 'dict-extra included' <<EOF
         "direct": {
             "elm/core": "1.0.5",
             "elm/json": "1.1.3",
+            "elm/time": "1.0.0",
             "elm-community/dict-extra": "2.4.0"
         },
         "indirect": {
@@ -90,11 +98,11 @@ test_against_elm_json 'dict-extra included' <<EOF
         "generate": [
             {
                 "underlying-type": "Dict",
-                "wrapper-type": "Type.DictInt.DictInt",
-                "public-key-type": "Int",
-                "private-key-type": "String",
-                "private-key-to-public-key": "String.toInt",
-                "public-key-to-private-key": "String.fromInt"
+                "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+                "public-key-type": "Time.Posix",
+                "private-key-type": "Int",
+                "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+                "public-key-to-private-key": "Time.posixToMillis"
             }
         ]
     }
