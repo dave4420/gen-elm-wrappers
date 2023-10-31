@@ -10,27 +10,40 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 				"elm/core": "1.0.5",
 				"elm-community/dict-extra": "2.4.0"
 			}
+		},
+		"gen-elm-wrappers": {
+			"generate": [
+				{
+					"underlying-type": "Dict",
+					"wrapper-type": "Type.DictCabbage.DictCabbage",
+					"public-key-type": "Type.Cabbage.Cabbage",
+					"private-key-type": "String",
+					"private-key-to-public-key": "Type.Cabbage.fromString",
+					"public-key-to-private-key": "Type.Cabbage.toString"
+				}
+			]
 		}
 	}`
 
 	expectedModule := dictModule{
 		wrapperType: identifier{
-			moduleName: "Type.DictInt",
-			name:       "DictInt",
+			moduleName: "Type.DictCabbage",
+			name:       "DictCabbage",
 		},
 		publicKeyType: identifier{
-			name: "Int",
+			moduleName: "Type.Cabbage",
+			name:       "Cabbage",
 		},
 		privateKeyType: identifier{
 			name: "String",
 		},
 		wrapKeyFn: identifier{
-			moduleName: "String",
-			name:       "toInt",
+			moduleName: "Type.Cabbage",
+			name:       "fromString",
 		},
 		unwrapKeyFn: identifier{
-			moduleName: "String",
-			name:       "fromInt",
+			moduleName: "Type.Cabbage",
+			name:       "toString",
 		},
 		elmCoreVersion:   "1.0.5",
 		dictExtraVersion: "2.4.0",
@@ -43,7 +56,7 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if output.modules[0] != expectedModule {
+	if len(output.modules) != 1 || output.modules[0] != expectedModule {
 		t.Errorf("Unexpected output: %v", output)
 	}
 }
@@ -55,6 +68,18 @@ func TestDecodesDictModuleConfigWithoutDictExtra(t *testing.T) {
 			"direct": {
 				"elm/core": "1.0.5"
 			}
+		},
+		"gen-elm-wrappers": {
+			"generate": [
+				{
+					"underlying-type": "Dict",
+					"wrapper-type": "Type.DictCabbage.DictCabbage",
+					"public-key-type": "Type.Cabbage.Cabbage",
+					"private-key-type": "String",
+					"private-key-to-public-key": "Type.Cabbage.fromString",
+					"public-key-to-private-key": "Type.Cabbage.toString"
+				}
+			]
 		}
 	}`
 
@@ -81,6 +106,18 @@ func TestDoesntDecodeDictModuleConfigWithoutElmCore(t *testing.T) {
 			"direct": {
 				"elm-community/dict-extra": "2.4.0"
 			}
+		},
+		"gen-elm-wrappers": {
+			"generate": [
+				{
+					"underlying-type": "Dict",
+					"wrapper-type": "Type.DictCabbage.DictCabbage",
+					"public-key-type": "Type.Cabbage.Cabbage",
+					"private-key-type": "String",
+					"private-key-to-public-key": "Type.Cabbage.fromString",
+					"public-key-to-private-key": "Type.Cabbage.toString"
+				}
+			]
 		}
 	}`
 

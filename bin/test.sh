@@ -48,6 +48,18 @@ test_against_elm_json 'core only' <<EOF
         },
         "indirect": {
         }
+    },
+    "gen-elm-wrappers": {
+        "generate": [
+            {
+                "underlying-type": "Dict",
+                "wrapper-type": "Type.DictInt.DictInt",
+                "public-key-type": "Int",
+                "private-key-type": "String",
+                "private-key-to-public-key": "String.toInt",
+                "public-key-to-private-key": "String.fromInt"
+            }
+        ]
     }
 }
 EOF
@@ -73,6 +85,18 @@ test_against_elm_json 'dict-extra included' <<EOF
         },
         "indirect": {
         }
+    },
+    "gen-elm-wrappers": {
+        "generate": [
+            {
+                "underlying-type": "Dict",
+                "wrapper-type": "Type.DictInt.DictInt",
+                "public-key-type": "Int",
+                "private-key-type": "String",
+                "private-key-to-public-key": "String.toInt",
+                "public-key-to-private-key": "String.fromInt"
+            }
+        ]
     }
 }
 EOF

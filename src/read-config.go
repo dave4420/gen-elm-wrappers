@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 )
 
 func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
@@ -22,6 +24,30 @@ func getObjectProperty(json interface{}, path string, propertyName string) (inte
 	}
 
 	return property, nil
+}
+
+func getObjectPropertyIdentifier(json interface{}, path string, propertyName string) (identifier, error) {
+	id := identifier{}
+
+	property, err := getObjectProperty(json, path, propertyName)
+	if err != nil {
+		return id, err
+	}
+
+	string, ok := property.(string)
+	if !ok {
+		return id, errors.New(path + "['" + propertyName + "'] is not a string")
+	}
+
+	ixFinalDot := strings.LastIndex(string, ".")
+	if ixFinalDot == -1 {
+		id.name = string
+	} else {
+		id.moduleName = string[:ixFinalDot]
+		id.name = string[ixFinalDot+1:]
+	}
+
+	return id, nil
 }
 
 func decodeConfig(root interface{}) (config, error) {
@@ -68,32 +94,66 @@ func decodeConfig(root interface{}) (config, error) {
 		dictExtraVersionString = ""
 	}
 
+	var genElmWrappers interface{}
+	genElmWrappers, err = getObjectProperty(root, "elm.json", "gen-elm-wrappers")
+	if err != nil {
+		return config{}, err
+	}
+
+	var generate interface{}
+	generate, err = getObjectProperty(genElmWrappers, "elm.json['gen-elm-wrappers']", "generate")
+	if err != nil {
+		return config{}, err
+	}
+
+	var generateArray []interface{}
+	generateArray, ok = generate.([]interface{})
+	if !ok {
+		return config{}, errors.New("elm.json['gen-elm-wrappers']['generate'] is not an array")
+	}
+
+	modules := []module{}
+	for i, moduleJson := range generateArray {
+		module := dictModule{
+			elmCoreVersion:   elmCoreVersionString,
+			dictExtraVersion: dictExtraVersionString,
+		}
+		path := fmt.Sprintf("elm.json['gen-elm-wrappers']['generate'][%d]", i)
+
+		module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
+		if err != nil {
+			return config{}, err
+		}
+		if module.wrapperType.moduleName == "" {
+			return config{}, errors.New(path + "['wrapperType'] is missing a module name")
+		}
+
+		module.publicKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-type")
+		if err != nil {
+			return config{}, err
+		}
+
+		module.privateKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-type")
+		if err != nil {
+			return config{}, err
+		}
+
+		module.wrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-to-public-key")
+		if err != nil {
+			return config{}, err
+		}
+
+		module.unwrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-to-private-key")
+		if err != nil {
+			return config{}, err
+		}
+
+		modules = append(modules, module)
+	}
+
 	return config{
-		path: "src",
-		modules: []module{
-			dictModule{
-				wrapperType: identifier{
-					moduleName: "Type.DictInt",
-					name:       "DictInt",
-				},
-				publicKeyType: identifier{
-					name: "Int",
-				},
-				privateKeyType: identifier{
-					name: "String",
-				},
-				wrapKeyFn: identifier{
-					moduleName: "String",
-					name:       "toInt",
-				},
-				unwrapKeyFn: identifier{
-					moduleName: "String",
-					name:       "fromInt",
-				},
-				elmCoreVersion:   elmCoreVersionString,
-				dictExtraVersion: dictExtraVersionString,
-			},
-		},
+		path:    "src",
+		modules: modules,
 	}, nil
 }
 
