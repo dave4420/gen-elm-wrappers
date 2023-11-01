@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "bin/test.sh",
-    "test:go:watch": "{ echo 0 ; fswatch -o src ; } | while read num ; do go test github.com/dave4420/gen-elm-wrappers/src ; done"
+    "test:go:watch": "{ echo 0 ; fswatch -o src ; } | while read num ; do date +'---- %Y-%m-%d %T' ; go test github.com/dave4420/gen-elm-wrappers/src ; done"
   },
   "repository": {
     "type": "git",
