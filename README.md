@@ -85,6 +85,14 @@ Actually… the test script won’t run on Windows.  (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
+- Don’t panic!  Instead, explicitly write the fatal error message to
+    stderr and exit with a non-zero status; don’t scare people with Go
+    panics
+- Format the generated code with `elm-format`
+- Improve error message when module name is missing — it might actually
+    be the type name that’s missing
+- Read our config from our own config file, instead of squatting in
+    elm.json
 - Wrap it all up nicely in an NPM package that includes/downloads
     prebuilt binaries (like the `elm` NPM package does)
 - Support `Set`
@@ -92,13 +100,9 @@ This isn’t in priority order yet and I’ve probably forgotten something.
 - Support versions of `elm/core` other than 1.0.5
 - Support versions of `elm-community/dict-extra` other than 2.4.0
 - Wrap more functions from `elm-community/dict-extra`
-- Format the generated code with `elm-format`
 - Support writing the generated code to a directory other than `src`;
     optionally wipe it first
 - Write more unit tests around reading the config from `elm.json`
-- Don’t panic!  Instead, explicitly write the fatal error message to
-    stderr and exit with a non-zero status; don’t scare people with Go
-    panics
 - Improve error messages when something’s wrong in `elm.json`
 - Validate identifiers in the config (instead of blindly writing them
     out and letting Elm complain about them)
