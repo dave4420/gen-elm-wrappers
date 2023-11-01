@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/dave4420/gen-elm-wrappers#readme",
   "devDependencies": {
-    "elm": "^0.19.1-5"
+    "elm": "^0.19.1-5",
+    "elm-format": "^0.8.7"
   }
 }
