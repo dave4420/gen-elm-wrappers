@@ -85,9 +85,6 @@ Actually… the test script won’t run on Windows.  (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Don’t panic!  Instead, explicitly write the fatal error message to
-    stderr and exit with a non-zero status; don’t scare people with Go
-    panics
 - Format the generated code with `elm-format`
 - Improve error message when module name is missing — it might actually
     be the type name that’s missing

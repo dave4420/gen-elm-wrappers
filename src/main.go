@@ -29,18 +29,31 @@ func writeModule(basePath string, module module) error {
 	return os.WriteFile(path, []byte(text), 0666)
 }
 
-func main() {
+func run() error {
 	conf, err := readConfig()
 	if err != nil {
-		// DAVE: don't panic! print to stderr and exit instead
-		panic(err)
+		return err
 	}
 
 	for _, module := range conf.modules {
 		err := writeModule(conf.path, module)
 		if err != nil {
-			// DAVE: don't panic! print to stderr and exit instead
-			panic(err)
+			return err
 		}
+	}
+
+	return nil
+}
+
+func main() {
+	exitCode := 0
+	defer func() {
+		os.Exit(exitCode)
+	}()
+
+	err := run()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "gen-elm-wrappers: %s\n", err.Error())
+		exitCode = 1
 	}
 }
