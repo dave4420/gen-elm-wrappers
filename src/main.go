@@ -9,10 +9,18 @@ import (
 )
 
 func writeModule(basePath string, module module) error {
+	elmFormatCmd := exec.Command("elm-format", "--stdin")
+
 	pathSegments := []string{basePath}
 	pathSegments = append(pathSegments, strings.Split(module.name(), ".")...)
 	path := strings.Join(pathSegments, string(filepath.Separator)) + ".elm"
-	fmt.Println("Writing module", module.name(), "to", path)
+
+	if elmFormatCmd.Err == nil {
+		fmt.Println("Writing formatted module", module.name(), "to", path)
+	} else {
+		fmt.Println("Writing unformatted module", module.name(), "to", path)
+	}
+
 	dir, _ := filepath.Split(path)
 	err := os.MkdirAll(dir, 0777)
 	if err != nil {
@@ -27,7 +35,15 @@ func writeModule(basePath string, module module) error {
 		module.source()...,
 	)
 	text := strings.Join(lines, "\n") + "\n"
-	return os.WriteFile(path, []byte(text), 0666)
+
+	if elmFormatCmd.Err == nil {
+		// DAVE: Stdin should be an io.Reader containing the source code we want to format
+		// DAVE: Stdout should be the *os.File we want to write to
+		elmFormatCmd.Stderr = os.Stderr
+		return elmFormatCmd.Run()
+	} else {
+		return os.WriteFile(path, []byte(text), 0666)
+	}
 }
 
 func run() error {
