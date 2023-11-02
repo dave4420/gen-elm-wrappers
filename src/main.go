@@ -38,9 +38,22 @@ func writeModule(basePath string, module module) error {
 
 	if elmFormatCmd.Err == nil {
 		// DAVE: Stdin should be an io.Reader containing the source code we want to format
-		// DAVE: Stdout should be the *os.File we want to write to
+
+		elmFormatCmd.Stdout, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+
 		elmFormatCmd.Stderr = os.Stderr
-		return elmFormatCmd.Run()
+
+		elmFormatCmd.Err = elmFormatCmd.Run()
+
+		err = elmFormatCmd.Stdout.(*os.File).Close()
+		if err != nil {
+			return err
+		}
+
+		return elmFormatCmd.Err
 	} else {
 		return os.WriteFile(path, []byte(text), 0666)
 	}
