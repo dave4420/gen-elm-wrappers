@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -35,9 +36,10 @@ func writeModule(basePath string, module module) error {
 		module.source()...,
 	)
 	text := strings.Join(lines, "\n") + "\n"
+	buffer := []byte(text)
 
 	if elmFormatCmd.Err == nil {
-		// DAVE: Stdin should be an io.Reader containing the source code we want to format
+		elmFormatCmd.Stdin = bytes.NewReader(buffer)
 
 		elmFormatCmd.Stdout, err = os.Create(path)
 		if err != nil {
@@ -55,7 +57,7 @@ func writeModule(basePath string, module module) error {
 
 		return elmFormatCmd.Err
 	} else {
-		return os.WriteFile(path, []byte(text), 0666)
+		return os.WriteFile(path, buffer, 0666)
 	}
 }
 
