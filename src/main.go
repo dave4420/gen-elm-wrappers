@@ -48,7 +48,7 @@ func writeModule(basePath string, module module) error {
 
 		elmFormatCmd.Stderr = os.Stderr
 
-		// elmFormatCmd.Err = elmFormatCmd.Run()
+		elmFormatCmd.Err = elmFormatCmd.Run()
 
 		err = elmFormatCmd.Stdout.(*os.File).Close()
 		if err != nil {
