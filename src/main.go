@@ -43,7 +43,14 @@ func run() error {
 		}
 	}
 
-	return nil
+	cmd := exec.Command("../bin/DAVE.sh", "elm-format", "--yes", conf.path)
+	if cmd.Err != nil {
+		return cmd.Err
+	}
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+
+	return err
 }
 
 func main() {
