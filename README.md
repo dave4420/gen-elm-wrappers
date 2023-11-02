@@ -66,6 +66,12 @@ For `Dict`s, the generated code wraps all functions from the core `Dict`
 module.  If your program also has `elm-community/dict-extra` as a direct
 dependency, it will also wrap several functions from `Dict.Extra`.
 
+If `elm-format` is on your PATH (and not a relative path, i.e. not
+starting with `.` or `..`) then the generated code will be beautifully
+formatted.  (This is the case, for example, when `elm-format` and
+`gen-elm-wrappers` were both installed locally using npm, and you’re
+running `gen-elm-wrappers` via npm.)
+
 
 ## Examples
 
@@ -85,7 +91,6 @@ Actually… the test script won’t run on Windows.  (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Format the generated code with `elm-format`
 - Improve error message when module name is missing — it might actually
     be the type name that’s missing
 - Read our config from our own config file, instead of squatting in

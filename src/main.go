@@ -1,17 +1,27 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
 func writeModule(basePath string, module module) error {
+	elmFormatCmd := exec.Command("elm-format", "--stdin")
+
 	pathSegments := []string{basePath}
 	pathSegments = append(pathSegments, strings.Split(module.name(), ".")...)
 	path := strings.Join(pathSegments, string(filepath.Separator)) + ".elm"
-	fmt.Println("Writing module", module.name(), "to", path)
+
+	if elmFormatCmd.Err == nil {
+		fmt.Println("Writing formatted module", module.name(), "to", path)
+	} else {
+		fmt.Println("Writing unformatted module", module.name(), "to", path)
+	}
+
 	dir, _ := filepath.Split(path)
 	err := os.MkdirAll(dir, 0777)
 	if err != nil {
@@ -26,7 +36,29 @@ func writeModule(basePath string, module module) error {
 		module.source()...,
 	)
 	text := strings.Join(lines, "\n") + "\n"
-	return os.WriteFile(path, []byte(text), 0666)
+	buffer := []byte(text)
+
+	if elmFormatCmd.Err == nil {
+		elmFormatCmd.Stdin = bytes.NewReader(buffer)
+
+		elmFormatCmd.Stdout, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+
+		elmFormatCmd.Stderr = os.Stderr
+
+		elmFormatCmd.Err = elmFormatCmd.Run()
+
+		err = elmFormatCmd.Stdout.(*os.File).Close()
+		if err != nil {
+			return err
+		}
+
+		return elmFormatCmd.Err
+	} else {
+		return os.WriteFile(path, buffer, 0666)
+	}
 }
 
 func run() error {
