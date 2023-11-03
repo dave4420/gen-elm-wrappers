@@ -117,44 +117,39 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 }
 
 func decodeElmConfig(root interface{}) (elmConfig, error) {
+	var ret elmConfig
+
 	dependencies, err := getObjectProperty(root, "elm.json", "dependencies")
 	if err != nil {
-		return elmConfig{}, err
+		return ret, err
 	}
 
 	direct, err := getObjectProperty(dependencies, "elm.json['dependencies']", "direct")
 	if err != nil {
-		return elmConfig{}, err
+		return ret, err
 	}
 
 	directObject, ok := direct.(map[string]interface{})
 	if !ok {
-		return elmConfig{}, errors.New("elm.json['dependencies']['direct'] is not an object")
+		return ret, errors.New("elm.json['dependencies']['direct'] is not an object")
 	}
 
 	elmCoreVersion, ok := directObject["elm/core"]
 	if !ok {
-		return elmConfig{}, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
+		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
 	}
 
-	elmCoreVersionString, ok := elmCoreVersion.(string)
+	ret.elmCoreVersion, ok = elmCoreVersion.(string)
 	if !ok {
-		return elmConfig{}, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
+		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
 	}
 
-	var dictExtraVersionString string
 	dictExtraVersion, ok := directObject["elm-community/dict-extra"]
 	if ok {
-		dictExtraVersionString, ok = dictExtraVersion.(string)
-	}
-	if !ok {
-		dictExtraVersionString = ""
+		ret.dictExtraVersion, _ = dictExtraVersion.(string)
 	}
 
-	return elmConfig{
-		elmCoreVersion:   elmCoreVersionString,
-		dictExtraVersion: dictExtraVersionString,
-	}, nil
+	return ret, nil
 }
 
 func decodeConfigFromBlob(blob []byte, elmConfig elmConfig) (config, error) {
