@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestDecodesDictModuleConfig(t *testing.T) {
+func TestDecodesElmConfig(t *testing.T) {
 	// given
 	input := `{
 		"dependencies": {
@@ -10,19 +10,85 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 				"elm/core": "1.0.5",
 				"elm-community/dict-extra": "2.4.0"
 			}
-		},
-		"gen-elm-wrappers": {
-			"generate": [
-				{
-					"underlying-type": "Dict",
-					"wrapper-type": "Type.DictCabbage.DictCabbage",
-					"public-key-type": "Type.Cabbage.Cabbage",
-					"private-key-type": "String",
-					"private-key-to-public-key": "Type.Cabbage.fromString",
-					"public-key-to-private-key": "Type.Cabbage.toString"
-				}
-			]
 		}
+	}`
+
+	expected := elmConfig{
+		elmCoreVersion:   "1.0.5",
+		dictExtraVersion: "2.4.0",
+	}
+
+	// when
+	output, err := decodeElmConfigFromBlob([]byte(input))
+
+	// then
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if output != expected {
+		t.Errorf("Unexpected output: %v", output)
+	}
+}
+
+func TestDecodesElmConfigWithoutDictExtra(t *testing.T) {
+	// given
+	input := `{
+		"dependencies": {
+			"direct": {
+				"elm/core": "1.0.5"
+			}
+		}
+	}`
+
+	expected := elmConfig{
+		elmCoreVersion:   "1.0.5",
+		dictExtraVersion: "",
+	}
+
+	// when
+	output, err := decodeElmConfigFromBlob([]byte(input))
+
+	// then
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if output != expected {
+		t.Errorf("Unexpected output: %v", output)
+	}
+}
+
+func TestDoesntDecodeElmConfigWithoutElmCore(t *testing.T) {
+	// given
+	input := `{
+		"dependencies": {
+			"direct": {
+				"elm-community/dict-extra": "2.4.0"
+			}
+		}
+	}`
+
+	// when
+	output, err := decodeElmConfigFromBlob([]byte(input))
+
+	// then
+	if err == nil {
+		t.Errorf("Expected error, instead got output: %v", output)
+	}
+}
+
+func TestDecodesDictModuleConfig(t *testing.T) {
+	// given
+	input := `{
+		"generate": [
+			{
+				"underlying-type": "Dict",
+				"wrapper-type": "Type.DictCabbage.DictCabbage",
+				"public-key-type": "Type.Cabbage.Cabbage",
+				"private-key-type": "String",
+				"private-key-to-public-key": "Type.Cabbage.fromString",
+				"public-key-to-private-key": "Type.Cabbage.toString"
+			}
+		]
 	}`
 
 	expectedModule := dictModule{
@@ -50,7 +116,13 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 	}
 
 	// when
-	output, err := decodeConfigFromBlob([]byte(input))
+	output, err := decodeConfigFromBlob(
+		[]byte(input),
+		elmConfig{
+			elmCoreVersion:   "1.0.5",
+			dictExtraVersion: "2.4.0",
+		},
+	)
 
 	// then
 	if err != nil {
@@ -58,74 +130,5 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 	}
 	if len(output.modules) != 1 || output.modules[0] != expectedModule {
 		t.Errorf("Unexpected output: %v", output)
-	}
-}
-
-func TestDecodesDictModuleConfigWithoutDictExtra(t *testing.T) {
-	// given
-	input := `{
-		"dependencies": {
-			"direct": {
-				"elm/core": "1.0.5"
-			}
-		},
-		"gen-elm-wrappers": {
-			"generate": [
-				{
-					"underlying-type": "Dict",
-					"wrapper-type": "Type.DictCabbage.DictCabbage",
-					"public-key-type": "Type.Cabbage.Cabbage",
-					"private-key-type": "String",
-					"private-key-to-public-key": "Type.Cabbage.fromString",
-					"public-key-to-private-key": "Type.Cabbage.toString"
-				}
-			]
-		}
-	}`
-
-	// when
-	output, err := decodeConfigFromBlob([]byte(input))
-
-	// then
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-	module, ok := output.modules[0].(dictModule)
-	if !ok {
-		t.Errorf("Unexpected output: %v", output)
-	}
-	if module.dictExtraVersion != "" {
-		t.Errorf("Unexpected dict-extra version: %v", module.dictExtraVersion)
-	}
-}
-
-func TestDoesntDecodeDictModuleConfigWithoutElmCore(t *testing.T) {
-	// given
-	input := `{
-		"dependencies": {
-			"direct": {
-				"elm-community/dict-extra": "2.4.0"
-			}
-		},
-		"gen-elm-wrappers": {
-			"generate": [
-				{
-					"underlying-type": "Dict",
-					"wrapper-type": "Type.DictCabbage.DictCabbage",
-					"public-key-type": "Type.Cabbage.Cabbage",
-					"private-key-type": "String",
-					"private-key-to-public-key": "Type.Cabbage.fromString",
-					"public-key-to-private-key": "Type.Cabbage.toString"
-				}
-			]
-		}
-	}`
-
-	// when
-	output, err := decodeConfigFromBlob([]byte(input))
-
-	// then
-	if err == nil {
-		t.Errorf("Expected error, instead got output: %v", output)
 	}
 }
