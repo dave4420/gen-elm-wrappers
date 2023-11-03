@@ -26,7 +26,7 @@ Copy it to somewhere on your `$PATH`.
 
 ## Using
 
-Add a `gen-elm-wrappers` key to your `elm.json`.  This needs to be an
+Create a `gen-elm-wrappers.json` file.  This needs to contain an
 object which (will eventually contain more config data, but currently
 only) contains a `generate` key holding an array of module definitions.
 
@@ -93,8 +93,6 @@ This isn’t in priority order yet and I’ve probably forgotten something.
 
 - Improve error message when module name is missing — it might actually
     be the type name that’s missing
-- Read our config from our own config file, instead of squatting in
-    elm.json
 - Wrap it all up nicely in an NPM package that includes/downloads
     prebuilt binaries (like the `elm` NPM package does)
 - Support `Set`
