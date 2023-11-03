@@ -9,7 +9,9 @@ test_against_elm_json() {
         mkdir test
         cd test
 
-        cat >elm.json
+        printf '%s' "$2" >elm.json
+
+        printf '%s' "$3" >gen-elm-wrappers.json
 
         mkdir src
         cat >src/Helpers.elm <<EOF
@@ -31,10 +33,7 @@ EOF
     )
 }
 
-go test github.com/dave4420/gen-elm-wrappers/src
-go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src
-
-test_against_elm_json 'core only' <<EOF
+elm_json_core_only='
 {
     "type": "application",
     "source-directories": [
@@ -55,23 +54,11 @@ test_against_elm_json 'core only' <<EOF
         },
         "indirect": {
         }
-    },
-    "gen-elm-wrappers": {
-        "generate": [
-            {
-                "underlying-type": "Dict",
-                "wrapper-type": "Type.DictTimePosix.DictTimePosix",
-                "public-key-type": "Time.Posix",
-                "private-key-type": "Int",
-                "private-key-to-public-key": "Helpers.maybePosixFromMillis",
-                "public-key-to-private-key": "Time.posixToMillis"
-            }
-        ]
     }
 }
-EOF
+'
 
-test_against_elm_json 'dict-extra included' <<EOF
+elm_json_with_extras='
 {
     "type": "application",
     "source-directories": [
@@ -93,18 +80,28 @@ test_against_elm_json 'dict-extra included' <<EOF
         },
         "indirect": {
         }
-    },
-    "gen-elm-wrappers": {
-        "generate": [
-            {
-                "underlying-type": "Dict",
-                "wrapper-type": "Type.DictTimePosix.DictTimePosix",
-                "public-key-type": "Time.Posix",
-                "private-key-type": "Int",
-                "private-key-to-public-key": "Helpers.maybePosixFromMillis",
-                "public-key-to-private-key": "Time.posixToMillis"
-            }
-        ]
     }
 }
-EOF
+'
+
+gen_elm_wrappers_json='
+{
+    "generate": [
+        {
+            "underlying-type": "Dict",
+            "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        }
+    ]
+}
+'
+
+go test github.com/dave4420/gen-elm-wrappers/src
+go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src
+
+test_against_elm_json 'core only' "$elm_json_core_only" "$gen_elm_wrappers_json"
+
+test_against_elm_json 'dict-extra included' "$elm_json_with_extras" "$gen_elm_wrappers_json"
