@@ -59,54 +59,8 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	var ok bool
 	var err error
 
-	var dependencies interface{}
-	dependencies, err = getObjectProperty(root, "elm.json", "dependencies")
-	if err != nil {
-		return config{}, err
-	}
-
-	var direct interface{}
-	direct, err = getObjectProperty(dependencies, "elm.json['dependencies']", "direct")
-	if err != nil {
-		return config{}, err
-	}
-
-	var directObject map[string]interface{}
-	directObject, ok = direct.(map[string]interface{})
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies']['direct'] is not an object")
-	}
-
-	var elmCoreVersion interface{}
-	elmCoreVersion, ok = directObject["elm/core"]
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
-	}
-
-	var elmCoreVersionString string
-	elmCoreVersionString, ok = elmCoreVersion.(string)
-	if !ok {
-		return config{}, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
-	}
-
-	var dictExtraVersion interface{}
-	var dictExtraVersionString string
-	dictExtraVersion, ok = directObject["elm-community/dict-extra"]
-	if ok {
-		dictExtraVersionString, ok = dictExtraVersion.(string)
-	}
-	if !ok {
-		dictExtraVersionString = ""
-	}
-
-	var genElmWrappers interface{}
-	genElmWrappers, err = getObjectProperty(root, "elm.json", "gen-elm-wrappers")
-	if err != nil {
-		return config{}, err
-	}
-
 	var generate interface{}
-	generate, err = getObjectProperty(genElmWrappers, "elm.json['gen-elm-wrappers']", "generate")
+	generate, err = getObjectProperty(root, "elm.json['gen-elm-wrappers']", "generate")
 	if err != nil {
 		return config{}, err
 	}
@@ -120,8 +74,8 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	modules := []module{}
 	for i, moduleJson := range generateArray {
 		module := dictModule{
-			elmCoreVersion:   elmCoreVersionString,
-			dictExtraVersion: dictExtraVersionString,
+			elmCoreVersion:   elmConfig.elmCoreVersion,
+			dictExtraVersion: elmConfig.dictExtraVersion,
 		}
 		path := fmt.Sprintf("elm.json['gen-elm-wrappers']['generate'][%d]", i)
 
