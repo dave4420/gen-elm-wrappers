@@ -163,7 +163,44 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 }
 
 func decodeElmConfig(root interface{}) (elmConfig, error) {
-	return elmConfig{}, nil
+	dependencies, err := getObjectProperty(root, "elm.json", "dependencies")
+	if err != nil {
+		return elmConfig{}, err
+	}
+
+	direct, err := getObjectProperty(dependencies, "elm.json['dependencies']", "direct")
+	if err != nil {
+		return elmConfig{}, err
+	}
+
+	directObject, ok := direct.(map[string]interface{})
+	if !ok {
+		return elmConfig{}, errors.New("elm.json['dependencies']['direct'] is not an object")
+	}
+
+	elmCoreVersion, ok := directObject["elm/core"]
+	if !ok {
+		return elmConfig{}, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
+	}
+
+	elmCoreVersionString, ok := elmCoreVersion.(string)
+	if !ok {
+		return elmConfig{}, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
+	}
+
+	var dictExtraVersionString string
+	dictExtraVersion, ok := directObject["elm-community/dict-extra"]
+	if ok {
+		dictExtraVersionString, ok = dictExtraVersion.(string)
+	}
+	if !ok {
+		dictExtraVersionString = ""
+	}
+
+	return elmConfig{
+		elmCoreVersion:   elmCoreVersionString,
+		dictExtraVersion: dictExtraVersionString,
+	}, nil
 }
 
 func decodeConfigFromBlob(blob []byte, elmConfig elmConfig) (config, error) {
