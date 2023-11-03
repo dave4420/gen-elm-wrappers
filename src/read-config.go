@@ -55,6 +55,41 @@ func getObjectPropertyIdentifier(json interface{}, path string, propertyName str
 	return id, nil
 }
 
+func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (module, error) {
+	var err error
+
+	module := dictModule{
+		elmCoreVersion:   elmConfig.elmCoreVersion,
+		dictExtraVersion: elmConfig.dictExtraVersion,
+	}
+
+	module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
+	if err != nil {
+		return module, err
+	}
+	if module.wrapperType.moduleName == "" {
+		return module, errors.New(path + "['wrapperType'] is missing a module name")
+	}
+
+	module.publicKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-type")
+	if err != nil {
+		return module, err
+	}
+
+	module.privateKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-type")
+	if err != nil {
+		return module, err
+	}
+
+	module.wrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-to-public-key")
+	if err != nil {
+		return module, err
+	}
+
+	module.unwrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-to-private-key")
+	return module, err
+}
+
 func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	var ok bool
 	var err error
@@ -73,36 +108,11 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 
 	modules := []module{}
 	for i, moduleJson := range generateArray {
-		module := dictModule{
-			elmCoreVersion:   elmConfig.elmCoreVersion,
-			dictExtraVersion: elmConfig.dictExtraVersion,
-		}
-		path := fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i)
-
-		module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
-		if err != nil {
-			return config{}, err
-		}
-		if module.wrapperType.moduleName == "" {
-			return config{}, errors.New(path + "['wrapperType'] is missing a module name")
-		}
-
-		module.publicKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-type")
-		if err != nil {
-			return config{}, err
-		}
-
-		module.privateKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-type")
-		if err != nil {
-			return config{}, err
-		}
-
-		module.wrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-to-public-key")
-		if err != nil {
-			return config{}, err
-		}
-
-		module.unwrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-to-private-key")
+		module, err := decodeModule(
+			moduleJson,
+			elmConfig,
+			fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i),
+		)
 		if err != nil {
 			return config{}, err
 		}
