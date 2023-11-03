@@ -91,22 +91,20 @@ func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (mod
 }
 
 func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
-	var ok bool
-	var err error
+	config := config{
+		path: "src",
+	}
 
-	var generate interface{}
-	generate, err = getObjectProperty(root, "gen-elm-wrappers.json", "generate")
+	generate, err := getObjectProperty(root, "gen-elm-wrappers.json", "generate")
 	if err != nil {
-		return config{}, err
+		return config, err
 	}
 
-	var generateArray []interface{}
-	generateArray, ok = generate.([]interface{})
+	generateArray, ok := generate.([]interface{})
 	if !ok {
-		return config{}, errors.New("gen-elm-wrappers.json['generate'] is not an array")
+		return config, errors.New("gen-elm-wrappers.json['generate'] is not an array")
 	}
 
-	modules := []module{}
 	for i, moduleJson := range generateArray {
 		module, err := decodeModule(
 			moduleJson,
@@ -114,16 +112,13 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 			fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i),
 		)
 		if err != nil {
-			return config{}, err
+			return config, err
 		}
 
-		modules = append(modules, module)
+		config.modules = append(config.modules, module)
 	}
 
-	return config{
-		path:    "src",
-		modules: modules,
-	}, nil
+	return config, nil
 }
 
 func decodeElmConfig(root interface{}) (elmConfig, error) {
