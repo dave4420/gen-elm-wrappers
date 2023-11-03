@@ -56,7 +56,18 @@ func getObjectPropertyIdentifier(json interface{}, path string, propertyName str
 }
 
 func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (module, error) {
-	var err error
+	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
+	if err != nil {
+		return nil, err
+	}
+
+	underlyingTypeString, ok := underlyingType.(string)
+	if !ok {
+		return nil, errors.New(path + "['underlying-type'] is not a string")
+	}
+	if underlyingTypeString != "Dict" {
+		return nil, errors.New(path + "is not wrapping a 'Dict'")
+	}
 
 	module := dictModule{
 		elmCoreVersion:   elmConfig.elmCoreVersion,
