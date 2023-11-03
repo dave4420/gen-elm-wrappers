@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+type elmConfig struct {
+	elmCoreVersion   string
+	dictExtraVersion string
+}
+
 func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
 	var ok bool
 
@@ -50,7 +55,7 @@ func getObjectPropertyIdentifier(json interface{}, path string, propertyName str
 	return id, nil
 }
 
-func decodeConfig(root interface{}) (config, error) {
+func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	var ok bool
 	var err error
 
@@ -157,21 +162,45 @@ func decodeConfig(root interface{}) (config, error) {
 	}, nil
 }
 
-func decodeConfigFromBlob(blob []byte) (config, error) {
+func decodeElmConfig(root interface{}) (elmConfig, error) {
+	return elmConfig{}, nil
+}
+
+func decodeConfigFromBlob(blob []byte, elmConfig elmConfig) (config, error) {
 	var root interface{}
 	err := json.Unmarshal(blob, &root)
 	if err != nil {
 		return config{}, err
 	}
 
-	return decodeConfig(root)
+	return decodeConfig(root, elmConfig)
+}
+
+func decodeElmConfigFromBlob(blob []byte) (elmConfig, error) {
+	var root interface{}
+	err := json.Unmarshal(blob, &root)
+	if err != nil {
+		return elmConfig{}, err
+	}
+
+	return decodeElmConfig(root)
 }
 
 func readConfig() (config, error) {
-	blob, err := os.ReadFile("elm.json")
+	elmJson, err := os.ReadFile("elm.json")
 	if err != nil {
 		return config{}, err
 	}
 
-	return decodeConfigFromBlob(blob)
+	elmConfig, err := decodeElmConfigFromBlob(elmJson)
+	if err != nil {
+		return config{}, err
+	}
+
+	configJson, err := os.ReadFile("gen-elm-wrappers.json")
+	if err != nil {
+		return config{}, err
+	}
+
+	return decodeConfigFromBlob(configJson, elmConfig)
 }
