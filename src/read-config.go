@@ -60,7 +60,7 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	var err error
 
 	var generate interface{}
-	generate, err = getObjectProperty(root, "elm.json['gen-elm-wrappers']", "generate")
+	generate, err = getObjectProperty(root, "gen-elm-wrappers.json", "generate")
 	if err != nil {
 		return config{}, err
 	}
@@ -68,7 +68,7 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	var generateArray []interface{}
 	generateArray, ok = generate.([]interface{})
 	if !ok {
-		return config{}, errors.New("elm.json['gen-elm-wrappers']['generate'] is not an array")
+		return config{}, errors.New("gen-elm-wrappers.json['generate'] is not an array")
 	}
 
 	modules := []module{}
@@ -77,7 +77,7 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 			elmCoreVersion:   elmConfig.elmCoreVersion,
 			dictExtraVersion: elmConfig.dictExtraVersion,
 		}
-		path := fmt.Sprintf("elm.json['gen-elm-wrappers']['generate'][%d]", i)
+		path := fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i)
 
 		module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
 		if err != nil {
