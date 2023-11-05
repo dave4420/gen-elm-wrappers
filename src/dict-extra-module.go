@@ -1,22 +1,31 @@
 package main
 
-func (module dictModule) extraDefs() []definition {
-	if module.dictExtraVersion == "" {
-		return []definition{}
+import "errors"
+
+func (module dictModule) extraDefs() ([]definition, error) {
+	if module.dictExtraVersion == nil {
+		return []definition{}, nil
 	}
-	return []definition{
-		module.groupByDef(),
-		module.filterGroupByDef(),
-		module.fromListByDef(),
-		module.fromListDedupeDef(),
-		module.fromListDedupeByDef(),
-		module.frequenciesDef(),
-		module.removeWhenDef(),
-		module.insertDedupeDef(),
-		module.filterMapDef(),
-		module.anyDef(),
-		module.findDef(),
+	supportedDictExtraVersion := version{major: 2, minor: 4}
+	if module.dictExtraVersion.isSameMajorAndNotEarlierMinorThan(supportedDictExtraVersion) {
+		return []definition{
+			module.groupByDef(),
+			module.filterGroupByDef(),
+			module.fromListByDef(),
+			module.fromListDedupeDef(),
+			module.fromListDedupeByDef(),
+			module.frequenciesDef(),
+			module.removeWhenDef(),
+			module.insertDedupeDef(),
+			module.filterMapDef(),
+			module.anyDef(),
+			module.findDef(),
+		}, nil
 	}
+	return []definition{}, errors.New("Versions " + module.dictExtraVersion.toString() +
+		" of elm-community/dict-extra are not supported, must be compatible with " +
+		supportedDictExtraVersion.toString(),
+	)
 }
 
 // List operations

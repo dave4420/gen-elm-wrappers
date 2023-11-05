@@ -14,8 +14,8 @@ func TestDecodesElmConfig(t *testing.T) {
 	}`
 
 	expected := elmConfig{
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "2.4.0",
+		elmCoreVersion:   version{major: 1, minor: 0},
+		dictExtraVersion: &version{major: 2, minor: 4},
 	}
 
 	// when
@@ -41,8 +41,8 @@ func TestDecodesElmConfigWithoutDictExtra(t *testing.T) {
 	}`
 
 	expected := elmConfig{
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "",
+		elmCoreVersion:   version{major: 1, minor: 0},
+		dictExtraVersion: nil,
 	}
 
 	// when
@@ -111,16 +111,16 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 			moduleName: "Type.Cabbage",
 			name:       "toString",
 		},
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "2.4.0",
+		elmCoreVersion:   version{major: 1, minor: 0},
+		dictExtraVersion: &version{major: 2, minor: 4},
 	}
 
 	// when
 	output, err := decodeConfigFromBlob(
 		[]byte(input),
 		elmConfig{
-			elmCoreVersion:   "1.0.5",
-			dictExtraVersion: "2.4.0",
+			elmCoreVersion:   version{major: 1, minor: 0},
+			dictExtraVersion: &version{major: 2, minor: 4},
 		},
 	)
 

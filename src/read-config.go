@@ -9,8 +9,8 @@ import (
 )
 
 type elmConfig struct {
-	elmCoreVersion   string
-	dictExtraVersion string
+	elmCoreVersion   version
+	dictExtraVersion *version
 }
 
 func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
@@ -155,14 +155,14 @@ func decodeElmConfig(root interface{}) (elmConfig, error) {
 		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
 	}
 
-	ret.elmCoreVersion, ok = elmCoreVersion.(string)
+	// ret.elmCoreVersion, ok = elmCoreVersion.(string) // DAVE
 	if !ok {
 		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
 	}
 
 	dictExtraVersion, ok := directObject["elm-community/dict-extra"]
 	if ok {
-		ret.dictExtraVersion, _ = dictExtraVersion.(string)
+		// ret.dictExtraVersion, _ = dictExtraVersion.(string) // DAVE
 	}
 
 	return ret, nil

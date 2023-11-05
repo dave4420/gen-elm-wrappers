@@ -6,10 +6,20 @@ func (module dictModule) name() string {
 	return module.wrapperType.moduleName
 }
 
-func (module dictModule) source() []string {
+func (module dictModule) source() ([]string, error) {
 	definitions := []definition{}
-	definitions = append(definitions, module.coreDefs()...)
-	definitions = append(definitions, module.extraDefs()...)
+
+	coreDefs, err := module.coreDefs()
+	if err != nil {
+		return []string{}, err
+	}
+	definitions = append(definitions, coreDefs...)
+
+	extraDefs, err := module.extraDefs()
+	if err != nil {
+		return []string{}, err
+	}
+	definitions = append(definitions, extraDefs...)
 
 	exports := []string{}
 	for _, export := range definitions {
@@ -17,7 +27,7 @@ func (module dictModule) source() []string {
 	}
 
 	var dictExtraImportLine string
-	if module.dictExtraVersion != "" {
+	if module.dictExtraVersion != nil {
 		dictExtraImportLine = "import Dict.Extra"
 	}
 
@@ -35,5 +45,5 @@ func (module dictModule) source() []string {
 		lines = append(lines, def.source...)
 	}
 
-	return lines
+	return lines, nil
 }
