@@ -67,7 +67,12 @@ func writeModule(basePath string, module module, elmConfig elmConfig) error {
 }
 
 func run() error {
-	conf, elmConfig, err := readConfig()
+	elmConfig, err := readElmConfig()
+	if err != nil {
+		return err
+	}
+
+	conf, err := readConfig()
 	if err != nil {
 		return err
 	}

@@ -149,23 +149,20 @@ func decodeElmConfigFromBlob(blob []byte) (elmConfig, error) {
 	return decodeElmConfig(root)
 }
 
-func readConfig() (config, elmConfig, error) {
-	// DAVE: split into two files
-	elmJson, err := os.ReadFile("elm.json")
-	if err != nil {
-		return config{}, elmConfig{}, err
-	}
-
-	elmConfig, err := decodeElmConfigFromBlob(elmJson)
-	if err != nil {
-		return config{}, elmConfig, err
-	}
-
+func readConfig() (config, error) {
 	configJson, err := os.ReadFile("gen-elm-wrappers.json")
 	if err != nil {
-		return config{}, elmConfig, err
+		return config{}, err
 	}
 
-	config, err := decodeConfigFromBlob(configJson)
-	return config, elmConfig, err
+	return decodeConfigFromBlob(configJson)
+}
+
+func readElmConfig() (elmConfig, error) {
+	elmJson, err := os.ReadFile("elm.json")
+	if err != nil {
+		return elmConfig{}, err
+	}
+
+	return decodeElmConfigFromBlob(elmJson)
 }
