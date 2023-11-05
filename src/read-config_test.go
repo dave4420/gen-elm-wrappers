@@ -25,7 +25,7 @@ func TestDecodesElmConfig(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if output != expected {
+	if !output.equals(expected) {
 		t.Errorf("Unexpected output: %v", output)
 	}
 }
@@ -52,7 +52,7 @@ func TestDecodesElmConfigWithoutDictExtra(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	if output != expected {
+	if !output.equals(expected) {
 		t.Errorf("Unexpected output: %v", output)
 	}
 }
