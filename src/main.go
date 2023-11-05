@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func writeModule(basePath string, module module) error {
+func writeModule(basePath string, module module, elmConfig elmConfig) error {
 	elmFormatCmd := exec.Command("elm-format", "--stdin")
 
 	pathSegments := []string{basePath}
@@ -28,7 +28,7 @@ func writeModule(basePath string, module module) error {
 		return err
 	}
 
-	moduleSource, err := module.source()
+	moduleSource, err := module.source(elmConfig)
 	if err != nil {
 		return err
 	}
@@ -67,13 +67,13 @@ func writeModule(basePath string, module module) error {
 }
 
 func run() error {
-	conf, err := readConfig()
+	conf, elmConfig, err := readConfig()
 	if err != nil {
 		return err
 	}
 
 	for _, module := range conf.modules {
-		err := writeModule(conf.path, module)
+		err := writeModule(conf.path, module, elmConfig)
 		if err != nil {
 			return err
 		}

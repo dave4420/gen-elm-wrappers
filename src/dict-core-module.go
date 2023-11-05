@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-func (module dictModule) coreDefs() ([]definition, error) {
+func (module dictModule) coreDefs(elmCoreVersion version) ([]definition, error) {
 	supportedElmCoreVersion := version{major: 1, minor: 0}
-	if module.elmCoreVersion.isSameMajorAndNotEarlierMinorThan(supportedElmCoreVersion) {
+	if elmCoreVersion.isSameMajorAndNotEarlierMinorThan(supportedElmCoreVersion) {
 		return []definition{
 			module.dictDef(),
 			module.emptyDef(),
@@ -34,7 +34,7 @@ func (module dictModule) coreDefs() ([]definition, error) {
 			module.mergeDef(),
 		}, nil
 	}
-	return []definition{}, errors.New("Versions " + module.elmCoreVersion.toString() + " of elm/core " +
+	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
 		"are not supported, must be compatible with " + supportedElmCoreVersion.toString(),
 	)
 }

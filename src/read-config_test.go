@@ -111,8 +111,6 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 			moduleName: "Type.Cabbage",
 			name:       "toString",
 		},
-		elmCoreVersion:   version{major: 1, minor: 0},
-		dictExtraVersion: &version{major: 2, minor: 4},
 	}
 
 	// when

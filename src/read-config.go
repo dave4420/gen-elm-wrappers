@@ -8,24 +8,6 @@ import (
 	"strings"
 )
 
-type elmConfig struct {
-	elmCoreVersion   version
-	dictExtraVersion *version
-}
-
-func (x elmConfig) equals(y elmConfig) bool {
-	if x.elmCoreVersion != y.elmCoreVersion {
-		return false
-	}
-	if x.dictExtraVersion == nil && y.dictExtraVersion == nil {
-		return true
-	}
-	if x.dictExtraVersion == nil || y.dictExtraVersion == nil {
-		return false
-	}
-	return *x.dictExtraVersion == *y.dictExtraVersion
-}
-
 func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
 	var ok bool
 
@@ -69,6 +51,7 @@ func getObjectPropertyIdentifier(json interface{}, path string, propertyName str
 }
 
 func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (module, error) {
+	// DAVE: rm elmConfig param
 	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
 	if err != nil {
 		return nil, err
@@ -82,10 +65,7 @@ func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (mod
 		return nil, errors.New(path + "is not wrapping a 'Dict'")
 	}
 
-	module := dictModule{
-		elmCoreVersion:   elmConfig.elmCoreVersion,
-		dictExtraVersion: elmConfig.dictExtraVersion,
-	}
+	module := dictModule{}
 
 	module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
 	if err != nil {
@@ -214,21 +194,23 @@ func decodeElmConfigFromBlob(blob []byte) (elmConfig, error) {
 	return decodeElmConfig(root)
 }
 
-func readConfig() (config, error) {
+func readConfig() (config, elmConfig, error) {
+	// DAVE: split into two files
 	elmJson, err := os.ReadFile("elm.json")
 	if err != nil {
-		return config{}, err
+		return config{}, elmConfig{}, err
 	}
 
 	elmConfig, err := decodeElmConfigFromBlob(elmJson)
 	if err != nil {
-		return config{}, err
+		return config{}, elmConfig, err
 	}
 
 	configJson, err := os.ReadFile("gen-elm-wrappers.json")
 	if err != nil {
-		return config{}, err
+		return config{}, elmConfig, err
 	}
 
-	return decodeConfigFromBlob(configJson, elmConfig)
+	config, err := decodeConfigFromBlob(configJson, elmConfig)
+	return config, elmConfig, err
 }

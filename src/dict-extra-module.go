@@ -2,12 +2,12 @@ package main
 
 import "errors"
 
-func (module dictModule) extraDefs() ([]definition, error) {
-	if module.dictExtraVersion == nil {
+func (module dictModule) extraDefs(dictExtraVersion *version) ([]definition, error) {
+	if dictExtraVersion == nil {
 		return []definition{}, nil
 	}
 	supportedDictExtraVersion := version{major: 2, minor: 4}
-	if module.dictExtraVersion.isSameMajorAndNotEarlierMinorThan(supportedDictExtraVersion) {
+	if dictExtraVersion.isSameMajorAndNotEarlierMinorThan(supportedDictExtraVersion) {
 		return []definition{
 			module.groupByDef(),
 			module.filterGroupByDef(),
@@ -22,7 +22,7 @@ func (module dictModule) extraDefs() ([]definition, error) {
 			module.findDef(),
 		}, nil
 	}
-	return []definition{}, errors.New("Versions " + module.dictExtraVersion.toString() +
+	return []definition{}, errors.New("Versions " + dictExtraVersion.toString() +
 		" of elm-community/dict-extra are not supported, must be compatible with " +
 		supportedDictExtraVersion.toString(),
 	)

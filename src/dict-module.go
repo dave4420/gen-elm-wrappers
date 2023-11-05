@@ -6,16 +6,16 @@ func (module dictModule) name() string {
 	return module.wrapperType.moduleName
 }
 
-func (module dictModule) source() ([]string, error) {
+func (module dictModule) source(elmConfig elmConfig) ([]string, error) {
 	definitions := []definition{}
 
-	coreDefs, err := module.coreDefs()
+	coreDefs, err := module.coreDefs(elmConfig.elmCoreVersion)
 	if err != nil {
 		return []string{}, err
 	}
 	definitions = append(definitions, coreDefs...)
 
-	extraDefs, err := module.extraDefs()
+	extraDefs, err := module.extraDefs(elmConfig.dictExtraVersion)
 	if err != nil {
 		return []string{}, err
 	}
@@ -27,7 +27,7 @@ func (module dictModule) source() ([]string, error) {
 	}
 
 	var dictExtraImportLine string
-	if module.dictExtraVersion != nil {
+	if elmConfig.dictExtraVersion != nil {
 		dictExtraImportLine = "import Dict.Extra"
 	}
 

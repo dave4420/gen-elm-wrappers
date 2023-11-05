@@ -7,15 +7,13 @@ type identifier struct {
 
 type module interface {
 	name() string
-	source() ([]string, error)
+	source(elmConfig elmConfig) ([]string, error)
 }
 
 type dictModule struct {
-	wrapperType      identifier
-	publicKeyType    identifier
-	privateKeyType   identifier
-	wrapKeyFn        identifier
-	unwrapKeyFn      identifier
-	elmCoreVersion   version
-	dictExtraVersion *version
+	wrapperType    identifier
+	publicKeyType  identifier
+	privateKeyType identifier
+	wrapKeyFn      identifier
+	unwrapKeyFn    identifier
 }
