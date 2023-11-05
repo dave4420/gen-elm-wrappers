@@ -125,6 +125,32 @@ elm_json_with_far_future_elm_core='
 }
 '
 
+elm_json_with_v1_dict_extra='
+{
+    "type": "application",
+    "source-directories": [
+        "src"
+    ],
+    "elm-version": "0.19.1",
+    "dependencies": {
+        "direct": {
+            "elm/core": "1.0.5",
+            "elm/json": "1.1.3",
+            "elm/time": "1.0.0",
+            "elm-community/dict-extra": "1.5.0"
+        },
+        "indirect": {
+        }
+    },
+    "test-dependencies": {
+        "direct": {
+        },
+        "indirect": {
+        }
+    }
+}
+'
+
 gen_elm_wrappers_json='
 {
     "generate": [
@@ -148,3 +174,5 @@ expect_success 'core only' "$elm_json_core_only" "$gen_elm_wrappers_json"
 expect_success 'dict-extra included' "$elm_json_with_extras" "$gen_elm_wrappers_json"
 
 expect_failure_to_generate 'far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_json"
+
+expect_failure_to_generate 'v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_json"
