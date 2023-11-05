@@ -1,33 +1,42 @@
 package main
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
-func (module dictModule) coreDefs() []definition {
-	return []definition{
-		module.dictDef(),
-		module.emptyDef(),
-		module.singletonDef(),
-		module.insertDef(),
-		module.updateDef(),
-		module.removeDef(),
-		module.isEmptyDef(),
-		module.memberDef(),
-		module.getDef(),
-		module.sizeDef(),
-		module.keysDef(),
-		module.valuesDef(),
-		module.toListDef(),
-		module.fromListDef(),
-		module.mapDef(),
-		module.foldlDef(),
-		module.foldrDef(),
-		module.filterDef(),
-		module.partitionDef(),
-		module.unionDef(),
-		module.intersectDef(),
-		module.diffDef(),
-		module.mergeDef(),
+func (module dictModule) coreDefs(elmCoreVersion version) ([]definition, error) {
+	supportedElmCoreVersion := version{major: 1, minor: 0}
+	if elmCoreVersion.isSameMajorAndNotEarlierMinorThan(supportedElmCoreVersion) {
+		return []definition{
+			module.dictDef(),
+			module.emptyDef(),
+			module.singletonDef(),
+			module.insertDef(),
+			module.updateDef(),
+			module.removeDef(),
+			module.isEmptyDef(),
+			module.memberDef(),
+			module.getDef(),
+			module.sizeDef(),
+			module.keysDef(),
+			module.valuesDef(),
+			module.toListDef(),
+			module.fromListDef(),
+			module.mapDef(),
+			module.foldlDef(),
+			module.foldrDef(),
+			module.filterDef(),
+			module.partitionDef(),
+			module.unionDef(),
+			module.intersectDef(),
+			module.diffDef(),
+			module.mergeDef(),
+		}, nil
 	}
+	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
+		"are not supported, must be compatible with " + supportedElmCoreVersion.toString(),
+	)
 }
 
 func (module dictModule) dictDef() definition {

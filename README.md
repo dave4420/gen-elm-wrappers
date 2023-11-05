@@ -97,8 +97,7 @@ This isn’t in priority order yet and I’ve probably forgotten something.
     prebuilt binaries (like the `elm` NPM package does)
 - Support `Set`
 - Support type variables in key types
-- Support versions of `elm/core` other than 1.0.5
-- Support versions of `elm-community/dict-extra` other than 2.4.0
+- Support versions of `elm-community/dict-extra` before 2.4.0
 - Wrap more functions from `elm-community/dict-extra`
 - Support writing the generated code to a directory other than `src`;
     optionally wipe it first

@@ -5,57 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 )
 
-type elmConfig struct {
-	elmCoreVersion   string
-	dictExtraVersion string
-}
-
-func getObjectProperty(json interface{}, path string, propertyName string) (interface{}, error) {
-	var ok bool
-
-	var object map[string]interface{}
-	object, ok = json.(map[string]interface{})
-	if !ok {
-		return nil, errors.New(path + " is not an object")
-	}
-
-	var property interface{}
-	property, ok = object[propertyName]
-	if !ok {
-		return nil, errors.New(path + "['" + propertyName + "'] not found")
-	}
-
-	return property, nil
-}
-
-func getObjectPropertyIdentifier(json interface{}, path string, propertyName string) (identifier, error) {
-	id := identifier{}
-
-	property, err := getObjectProperty(json, path, propertyName)
-	if err != nil {
-		return id, err
-	}
-
-	string, ok := property.(string)
-	if !ok {
-		return id, errors.New(path + "['" + propertyName + "'] is not a string")
-	}
-
-	ixFinalDot := strings.LastIndex(string, ".")
-	if ixFinalDot == -1 {
-		id.name = string
-	} else {
-		id.moduleName = string[:ixFinalDot]
-		id.name = string[ixFinalDot+1:]
-	}
-
-	return id, nil
-}
-
-func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (module, error) {
+func decodeModule(moduleJson interface{}, path string) (module, error) {
 	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
 	if err != nil {
 		return nil, err
@@ -69,10 +21,7 @@ func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (mod
 		return nil, errors.New(path + "is not wrapping a 'Dict'")
 	}
 
-	module := dictModule{
-		elmCoreVersion:   elmConfig.elmCoreVersion,
-		dictExtraVersion: elmConfig.dictExtraVersion,
-	}
+	module := dictModule{}
 
 	module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
 	if err != nil {
@@ -101,7 +50,7 @@ func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (mod
 	return module, err
 }
 
-func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
+func decodeConfig(root interface{}) (config, error) {
 	config := config{
 		path: "src",
 	}
@@ -119,7 +68,6 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	for i, moduleJson := range generateArray {
 		module, err := decodeModule(
 			moduleJson,
-			elmConfig,
 			fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i),
 		)
 		if err != nil {
@@ -132,77 +80,21 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	return config, nil
 }
 
-func decodeElmConfig(root interface{}) (elmConfig, error) {
-	var ret elmConfig
-
-	dependencies, err := getObjectProperty(root, "elm.json", "dependencies")
-	if err != nil {
-		return ret, err
-	}
-
-	direct, err := getObjectProperty(dependencies, "elm.json['dependencies']", "direct")
-	if err != nil {
-		return ret, err
-	}
-
-	directObject, ok := direct.(map[string]interface{})
-	if !ok {
-		return ret, errors.New("elm.json['dependencies']['direct'] is not an object")
-	}
-
-	elmCoreVersion, ok := directObject["elm/core"]
-	if !ok {
-		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
-	}
-
-	ret.elmCoreVersion, ok = elmCoreVersion.(string)
-	if !ok {
-		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
-	}
-
-	dictExtraVersion, ok := directObject["elm-community/dict-extra"]
-	if ok {
-		ret.dictExtraVersion, _ = dictExtraVersion.(string)
-	}
-
-	return ret, nil
-}
-
-func decodeConfigFromBlob(blob []byte, elmConfig elmConfig) (config, error) {
+func decodeConfigFromBlob(blob []byte) (config, error) {
 	var root interface{}
 	err := json.Unmarshal(blob, &root)
 	if err != nil {
 		return config{}, err
 	}
 
-	return decodeConfig(root, elmConfig)
-}
-
-func decodeElmConfigFromBlob(blob []byte) (elmConfig, error) {
-	var root interface{}
-	err := json.Unmarshal(blob, &root)
-	if err != nil {
-		return elmConfig{}, err
-	}
-
-	return decodeElmConfig(root)
+	return decodeConfig(root)
 }
 
 func readConfig() (config, error) {
-	elmJson, err := os.ReadFile("elm.json")
-	if err != nil {
-		return config{}, err
-	}
-
-	elmConfig, err := decodeElmConfigFromBlob(elmJson)
-	if err != nil {
-		return config{}, err
-	}
-
 	configJson, err := os.ReadFile("gen-elm-wrappers.json")
 	if err != nil {
 		return config{}, err
 	}
 
-	return decodeConfigFromBlob(configJson, elmConfig)
+	return decodeConfigFromBlob(configJson)
 }

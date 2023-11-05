@@ -2,80 +2,6 @@ package main
 
 import "testing"
 
-func TestDecodesElmConfig(t *testing.T) {
-	// given
-	input := `{
-		"dependencies": {
-			"direct": {
-				"elm/core": "1.0.5",
-				"elm-community/dict-extra": "2.4.0"
-			}
-		}
-	}`
-
-	expected := elmConfig{
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "2.4.0",
-	}
-
-	// when
-	output, err := decodeElmConfigFromBlob([]byte(input))
-
-	// then
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-	if output != expected {
-		t.Errorf("Unexpected output: %v", output)
-	}
-}
-
-func TestDecodesElmConfigWithoutDictExtra(t *testing.T) {
-	// given
-	input := `{
-		"dependencies": {
-			"direct": {
-				"elm/core": "1.0.5"
-			}
-		}
-	}`
-
-	expected := elmConfig{
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "",
-	}
-
-	// when
-	output, err := decodeElmConfigFromBlob([]byte(input))
-
-	// then
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
-	if output != expected {
-		t.Errorf("Unexpected output: %v", output)
-	}
-}
-
-func TestDoesntDecodeElmConfigWithoutElmCore(t *testing.T) {
-	// given
-	input := `{
-		"dependencies": {
-			"direct": {
-				"elm-community/dict-extra": "2.4.0"
-			}
-		}
-	}`
-
-	// when
-	output, err := decodeElmConfigFromBlob([]byte(input))
-
-	// then
-	if err == nil {
-		t.Errorf("Expected error, instead got output: %v", output)
-	}
-}
-
 func TestDecodesDictModuleConfig(t *testing.T) {
 	// given
 	input := `{
@@ -111,18 +37,10 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 			moduleName: "Type.Cabbage",
 			name:       "toString",
 		},
-		elmCoreVersion:   "1.0.5",
-		dictExtraVersion: "2.4.0",
 	}
 
 	// when
-	output, err := decodeConfigFromBlob(
-		[]byte(input),
-		elmConfig{
-			elmCoreVersion:   "1.0.5",
-			dictExtraVersion: "2.4.0",
-		},
-	)
+	output, err := decodeConfigFromBlob([]byte(input))
 
 	// then
 	if err != nil {
