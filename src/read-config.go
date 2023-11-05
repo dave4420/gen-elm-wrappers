@@ -155,14 +155,27 @@ func decodeElmConfig(root interface{}) (elmConfig, error) {
 		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] not found")
 	}
 
-	// ret.elmCoreVersion, ok = elmCoreVersion.(string) // DAVE
+	elmCoreVersionString, ok := elmCoreVersion.(string)
 	if !ok {
 		return ret, errors.New("elm.json['dependencies']['direct']['elm/core'] is not a string")
 	}
 
+	ret.elmCoreVersion, err = parseVersion(elmCoreVersionString)
+	if err != nil {
+		return ret, err
+	}
+
 	dictExtraVersion, ok := directObject["elm-community/dict-extra"]
+	var dictExtraVersionString string
 	if ok {
-		// ret.dictExtraVersion, _ = dictExtraVersion.(string) // DAVE
+		dictExtraVersionString, ok = dictExtraVersion.(string)
+	}
+	if ok {
+		dictExtraVersion, err := parseVersion(dictExtraVersionString)
+		if err != nil {
+			return ret, err
+		}
+		ret.dictExtraVersion = &dictExtraVersion
 	}
 
 	return ret, nil
