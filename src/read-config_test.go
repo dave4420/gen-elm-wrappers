@@ -114,13 +114,7 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 	}
 
 	// when
-	output, err := decodeConfigFromBlob(
-		[]byte(input),
-		elmConfig{
-			elmCoreVersion:   version{major: 1, minor: 0},
-			dictExtraVersion: &version{major: 2, minor: 4},
-		},
-	)
+	output, err := decodeConfigFromBlob([]byte(input))
 
 	// then
 	if err != nil {

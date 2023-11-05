@@ -50,8 +50,7 @@ func getObjectPropertyIdentifier(json interface{}, path string, propertyName str
 	return id, nil
 }
 
-func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (module, error) {
-	// DAVE: rm elmConfig param
+func decodeModule(moduleJson interface{}, path string) (module, error) {
 	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
 	if err != nil {
 		return nil, err
@@ -94,7 +93,7 @@ func decodeModule(moduleJson interface{}, elmConfig elmConfig, path string) (mod
 	return module, err
 }
 
-func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
+func decodeConfig(root interface{}) (config, error) {
 	config := config{
 		path: "src",
 	}
@@ -112,7 +111,6 @@ func decodeConfig(root interface{}, elmConfig elmConfig) (config, error) {
 	for i, moduleJson := range generateArray {
 		module, err := decodeModule(
 			moduleJson,
-			elmConfig,
 			fmt.Sprintf("gen-elm-wrappers.json['generate'][%d]", i),
 		)
 		if err != nil {
@@ -174,14 +172,14 @@ func decodeElmConfig(root interface{}) (elmConfig, error) {
 	return ret, nil
 }
 
-func decodeConfigFromBlob(blob []byte, elmConfig elmConfig) (config, error) {
+func decodeConfigFromBlob(blob []byte) (config, error) {
 	var root interface{}
 	err := json.Unmarshal(blob, &root)
 	if err != nil {
 		return config{}, err
 	}
 
-	return decodeConfig(root, elmConfig)
+	return decodeConfig(root)
 }
 
 func decodeElmConfigFromBlob(blob []byte) (elmConfig, error) {
@@ -211,6 +209,6 @@ func readConfig() (config, elmConfig, error) {
 		return config{}, elmConfig, err
 	}
 
-	config, err := decodeConfigFromBlob(configJson, elmConfig)
+	config, err := decodeConfigFromBlob(configJson)
 	return config, elmConfig, err
 }
