@@ -28,7 +28,8 @@ func decodeModule(moduleJson interface{}, path string) (module, error) {
 		return module, err
 	}
 	if module.wrapperType.moduleName == "" {
-		return module, errors.New(path + "['wrapperType'] is missing a module name")
+		return module, errors.New(path + "['wrapperType'] should be a fully qualified type name, " +
+			"but either the type name or the module name is missing")
 	}
 
 	module.publicKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-type")

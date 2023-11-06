@@ -91,8 +91,6 @@ Actually… the test script won’t run on Windows.  (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Improve error message when module name is missing — it might actually
-    be the type name that’s missing
 - Wrap it all up nicely in an NPM package that includes/downloads
     prebuilt binaries (like the `elm` NPM package does)
 - Support `Set`
