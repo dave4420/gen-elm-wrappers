@@ -99,3 +99,9 @@ func main() {
 		exitCode = 1
 	}
 }
+
+// DAVE: pick a license
+// DAVE: add license file
+// DAVE: add license and copyright notice to package.json
+// DAVE: add license and copyright notice to go.mod
+// DAVE: check that current year is present
