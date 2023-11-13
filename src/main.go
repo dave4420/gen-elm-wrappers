@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -66,7 +67,7 @@ func writeModule(basePath string, module module, elmConfig elmConfig) error {
 	}
 }
 
-func run() error {
+func runMain() error {
 	elmConfig, err := readElmConfig()
 	if err != nil {
 		return err
@@ -87,13 +88,39 @@ func run() error {
 	return nil
 }
 
+func runHelp() error {
+	fmt.Println("Usage:")
+	fmt.Println("  gen-elm-wrappers")
+	fmt.Println("  gen-elm-wrappers help")
+	fmt.Println()
+	fmt.Println("For more info, see https://github.com/dave4420/gen-elm-wrappers")
+	fmt.Println()
+	return nil
+}
+
 func main() {
 	exitCode := 0
 	defer func() {
 		os.Exit(exitCode)
 	}()
 
-	err := run()
+	params := []string{}
+	var err error
+
+	if len(os.Args) > 0 {
+		params = os.Args[1:]
+	}
+
+	if slices.Equal(params, []string{}) {
+		err = runMain()
+	} else if slices.Equal(params, []string{"help"}) {
+		err = runHelp()
+	} else {
+		fmt.Fprintf(os.Stderr, "gen-elm-wrappers: don’t understand command %v\n", params)
+		err = runHelp()
+		exitCode = 1
+	}
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "gen-elm-wrappers: %s\n", err.Error())
 		exitCode = 1
