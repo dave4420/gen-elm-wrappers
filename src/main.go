@@ -95,9 +95,18 @@ func runHelp() error {
 	fmt.Println("        gen-elm-wrappers.json.")
 	fmt.Println("    gen-elm-wrappers help")
 	fmt.Println("        Display this help text.")
+	fmt.Println("    gen-elm-wrappers version")
+	fmt.Println("        Display this program’s version (" + Version + ").")
 	fmt.Println()
 	fmt.Println("For more info, see https://github.com/dave4420/gen-elm-wrappers")
 	fmt.Println()
+	return nil
+}
+
+var Version string
+
+func runVersion() error {
+	fmt.Printf("gen-elm-wrappers version %s\n", Version)
 	return nil
 }
 
@@ -118,6 +127,8 @@ func main() {
 		err = runMain()
 	} else if slices.Equal(params, []string{"help"}) {
 		err = runHelp()
+	} else if slices.Equal(params, []string{"version"}) {
+		err = runVersion()
 	} else {
 		fmt.Fprintf(os.Stderr, "gen-elm-wrappers: don’t understand command %v\n", params)
 		err = runHelp()
@@ -129,3 +140,15 @@ func main() {
 		exitCode = 1
 	}
 }
+
+// DAVE: button to trigger a workflow on trunk
+// DAVE: ...with a text field for the version number, satisfying a regex
+// DAVE: verify that the version number is not already in use
+// DAVE: tag the commit with the version number, and push it
+// DAVE: find out how to download a binary from an npm package
+// DAVE: find out what architectures supported by go and npm
+// DAVE: create a release containing the binaries for each arch
+// DAVE: get and save npm creds to 1password
+// DAVE: install 1password in github actions and demo it fetching text from 1password
+// DAVE: munge package.json to set version number and make it publishable
+// DAVE: actually publish the package

@@ -178,7 +178,7 @@ gen_elm_wrappers_json='
 '
 
 go test github.com/dave4420/gen-elm-wrappers/src
-go build -o gen-elm-wrappers github.com/dave4420/gen-elm-wrappers/src
+BINARY_VERSION='development-version' bin/build-binary.sh
 
 expect_success 'core only' "$elm_json_core_only" "$gen_elm_wrappers_json"
 
