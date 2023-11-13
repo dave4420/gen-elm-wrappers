@@ -95,9 +95,18 @@ func runHelp() error {
 	fmt.Println("        gen-elm-wrappers.json.")
 	fmt.Println("    gen-elm-wrappers help")
 	fmt.Println("        Display this help text.")
+	fmt.Println("    gen-elm-wrappers version")
+	fmt.Println("        Display this program’s version (" + Version + ").")
 	fmt.Println()
 	fmt.Println("For more info, see https://github.com/dave4420/gen-elm-wrappers")
 	fmt.Println()
+	return nil
+}
+
+var Version string
+
+func runVersion() error {
+	fmt.Printf("gen-elm-wrappers version %s\n", Version)
 	return nil
 }
 
@@ -118,6 +127,8 @@ func main() {
 		err = runMain()
 	} else if slices.Equal(params, []string{"help"}) {
 		err = runHelp()
+	} else if slices.Equal(params, []string{"version"}) {
+		err = runVersion()
 	} else {
 		fmt.Fprintf(os.Stderr, "gen-elm-wrappers: don’t understand command %v\n", params)
 		err = runHelp()
