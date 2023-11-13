@@ -99,5 +99,3 @@ func main() {
 		exitCode = 1
 	}
 }
-
-// DAVE: check that current year is present
