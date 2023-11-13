@@ -1,6 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+expect_files_to_contain_current_year() {
+    printf 'Expecting current year to be present in: %s\n' "$*"
+    year="$(date +'%Y')"
+    for file in "$@" ; do
+        if ! grep -qE '\b'"$year"'\b' "$file" ; then
+            printf 'Current year "%s" not found in %s\n' "$year" "$file" >&2
+            exit 1
+        fi
+    done
+}
+
 expect_success() {
     (
         printf 'Expecting success with %s\n' "$1"
@@ -176,3 +187,7 @@ expect_success 'dict-extra included' "$elm_json_with_extras" "$gen_elm_wrappers_
 expect_failure_to_generate 'far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_json"
 
 expect_failure_to_generate 'v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_json"
+
+expect_files_to_contain_current_year LICENSE
+
+echo PASS

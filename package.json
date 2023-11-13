@@ -2,6 +2,7 @@
   "name": "gen-elm-wrappers",
   "version": "1.0.0",
   "description": "Generate boilerplate Elm modules wrapping Dicts and Sets with keys that don’t support comparable.",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "bin/test.sh",
@@ -15,7 +16,7 @@
     "Elm"
   ],
   "author": "Dave Hinton",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/dave4420/gen-elm-wrappers/issues"
   },
