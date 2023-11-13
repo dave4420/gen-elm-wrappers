@@ -100,5 +100,4 @@ func main() {
 	}
 }
 
-// DAVE: add license and copyright notice to go.mod
 // DAVE: check that current year is present
