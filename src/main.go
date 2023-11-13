@@ -90,8 +90,11 @@ func runMain() error {
 
 func runHelp() error {
 	fmt.Println("Usage:")
-	fmt.Println("  gen-elm-wrappers")
-	fmt.Println("  gen-elm-wrappers help")
+	fmt.Println("    gen-elm-wrappers")
+	fmt.Println("        Generate Elm source code based on the contents of elm.json and")
+	fmt.Println("        gen-elm-wrappers.json.")
+	fmt.Println("    gen-elm-wrappers help")
+	fmt.Println("        Display this help text.")
 	fmt.Println()
 	fmt.Println("For more info, see https://github.com/dave4420/gen-elm-wrappers")
 	fmt.Println()
