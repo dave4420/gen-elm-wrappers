@@ -157,6 +157,9 @@ func main() {
 //        -  os.arch()
 //   		 - Possible values are 'arm', 'arm64', 'ia32', 'loong64', 'mips',
 //			   'mipsel', 'ppc', 'ppc64', 'riscv64', 's390', 's390x', and 'x64'.
+//       go:
+//        -  $GOOS and $GOARCH
+//        -  valid combinations listed at https://go.dev/doc/install/source#environment
 // DAVE: create a release containing the binaries for each arch
 // DAVE: get and save npm creds to 1password
 // DAVE: install 1password in github actions and demo it fetching text from 1password
