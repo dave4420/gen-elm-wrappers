@@ -141,10 +141,7 @@ func main() {
 	}
 }
 
-// DAVE: button to trigger a workflow on trunk
-// DAVE: ...with a text field for the version number, satisfying a regex
 // DAVE: verify that the version number is not already in use
-// DAVE: tag the commit with the version number, and push it
 // DAVE: find out how to download a binary from an npm package
 // DAVE: find out what architectures supported by go and node
 //       node:

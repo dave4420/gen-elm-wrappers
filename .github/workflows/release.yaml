@@ -1,0 +1,47 @@
+name: Release
+run-name: Release version ${{ github.event.inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  noddy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check version format
+        run: |
+          if [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          then
+            echo "Version is in the correct format"
+          else
+            echo "Version must be in the format X.Y.Z"
+            exit 1
+          fi
+      - name: Configure git
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+      - name: Build
+        run: |
+          # DAVE: bin/build.sh
+      - name: Tag
+        run: |
+          git tag -a v${{ github.event.inputs.version }} -m "Release version ${{ github.event.inputs.version }}"
+          git push origin --tags
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            out/*
+          tag_name: ${{ github.event.inputs.version }}
