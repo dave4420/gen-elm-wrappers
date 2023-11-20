@@ -34,7 +34,9 @@ jobs:
           go-version-file: './go.mod'
       - name: Build
         run: |
-          # DAVE: bin/build.sh
+          bin/build-binaries.sh
+        env:
+          BINARY_VERSION: ${{ github.event.inputs.version }}
       - name: Tag
         run: |
           git tag -a v${{ github.event.inputs.version }} -m "Release version ${{ github.event.inputs.version }}"
