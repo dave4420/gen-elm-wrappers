@@ -11,19 +11,16 @@ on:
 permissions:
   contents: write
 
+env:
+  BINARY_VERSION: ${{ github.event.inputs.version }}
+
 jobs:
-  noddy:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Check version format
         run: |
-          if [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          then
-            echo "Version is in the correct format"
-          else
-            echo "Version must be in the format X.Y.Z"
-            exit 1
-          fi
+          bin/check-version.pl
       - name: Configure git
         run: |
           git config --global user.name '${{ github.actor }}'
@@ -35,8 +32,6 @@ jobs:
       - name: Build
         run: |
           bin/build-binaries.sh
-        env:
-          BINARY_VERSION: ${{ github.event.inputs.version }}
       - name: Tag
         run: |
           git tag -a v${{ github.event.inputs.version }} -m "Release version ${{ github.event.inputs.version }}"
