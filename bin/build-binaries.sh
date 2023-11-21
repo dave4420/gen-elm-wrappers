@@ -1,10 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [[ -z "$BINARY_VERSION" ]] ; then
-    printf 'BINARY_VERSION not set\n' >&2
-    exit 1
-fi
+: ${BINARY_VERSION?}
 
 list-binaries-to-build() {
     # DAVE: extract this from suitable json file
