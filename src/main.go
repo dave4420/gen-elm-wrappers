@@ -140,3 +140,24 @@ func main() {
 		exitCode = 1
 	}
 }
+
+// DAVE: verify that the version number is not already in use
+// DAVE: find out how to download a binary from an npm package
+// DAVE: find out what architectures supported by go and node
+//       node:
+//        -  os.type()
+//            -  Returns the operating system name as returned by uname(3).
+//				 For example, it returns 'Linux' on Linux, 'Darwin' on macOS,
+//				 and 'Windows_NT' on Windows.
+// 				 https://linux.die.net/man/3/uname
+//  			 https://en.wikipedia.org/wiki/Uname#Examples
+//        -  os.arch()
+//   		 - Possible values are 'arm', 'arm64', 'ia32', 'loong64', 'mips',
+//			   'mipsel', 'ppc', 'ppc64', 'riscv64', 's390', 's390x', and 'x64'.
+//       go:
+//        -  $GOOS and $GOARCH
+//        -  valid combinations listed at https://go.dev/doc/install/source#environment
+// DAVE: get and save npm creds to 1password
+// DAVE: install 1password in github actions and demo it fetching text from 1password
+// DAVE: munge package.json to set version number and make it publishable
+// DAVE: actually publish the package to npm

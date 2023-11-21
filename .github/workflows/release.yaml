@@ -1,0 +1,44 @@
+name: Release
+run-name: Release version ${{ github.event.inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  BINARY_VERSION: ${{ github.event.inputs.version }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure git
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+      - uses: actions/checkout@v4
+      - name: Check version format
+        run: |
+          bin/check-version.pl
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+      - name: Build
+        run: |
+          bin/build-binaries.sh
+      - name: Tag
+        run: |
+          git tag -a v${{ env.BINARY_VERSION }} -m "Release version ${{ env.BINARY_VERSION }}"
+          git push origin --tags
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            out/*
+          tag_name: ${{ env.BINARY_VERSION }}
