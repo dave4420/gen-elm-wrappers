@@ -4,6 +4,8 @@ set -euo pipefail
 : ${BINARY_NAME?}
 : ${BINARY_VERSION?}
 
+set -x
+
 go build \
     -o "$BINARY_NAME" \
     -ldflags "-X main.Version=$BINARY_VERSION" \
