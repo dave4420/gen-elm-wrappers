@@ -4,11 +4,7 @@ set -euo pipefail
 : ${BINARY_VERSION?}
 
 list-binaries-to-build() {
-    # DAVE: extract this from suitable json file
-    echo darwin amd64
-    echo darwin arm64
-    echo linux amd64
-    echo windows amd64
+    perl <targets.txt -ne 'print if not /^#/'
 }
 
 rm -rf out
@@ -16,6 +12,13 @@ mkdir out
 
 list-binaries-to-build | while read GOOS GOARCH ; do
     case $GOOS in
+        android|ios)
+            # get an error when building for android
+            # get a warning when building for ios, suggests it won't work
+            # I'm not expecting many people to want to run this software
+            # on these platforms
+            continue
+            ;;
         windows)
             BINARY_EXT=.exe
             ;;
