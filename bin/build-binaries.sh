@@ -11,6 +11,7 @@ rm -rf out
 mkdir out
 
 list-binaries-to-build | while read GOOS GOARCH ; do
+    # keep in sync with build-npm-packages.sh
     case $GOOS in
         android|ios)
             # get an error when building for android
