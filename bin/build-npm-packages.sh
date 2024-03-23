@@ -131,4 +131,21 @@ done
 
 printf '}\n' >> npm/$package_name/arch-packages.json
 
-#DAVE: add main package.json
+node -e '
+    const pj = require("./package.json");
+    pj.version = process.env.BINARY_VERSION;
+    delete pj.private;
+    pj.scripts = {
+        "postinstall": "node ./install.js"
+    };
+    pj.bin = "bin/cli.js";
+    delete pj.devDependencies;
+    fs.readdirSync("npm").forEach((dir) => {
+        if (dir === "'$package_name'") {
+            return;
+        }
+        pj.optionalDependencies[dir] = process.env.BINARY_VERSION;
+    });
+    process.stdout.write(JSON.stringify(pj, null, 2));
+    process.stdout.write("\n");
+' > npm/$package_name/package.json
