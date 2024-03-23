@@ -47,6 +47,9 @@ list-binaries-to-build() {
     perl <targets.txt -ne 'print if not /^#/'
 }
 
+cp -r npm-main-template npm/$package_name
+printf '{\n' >> npm/$package_name/arch-packages.json
+
 list-binaries-to-build | while read GOOS GOARCH ; do
     BINARY_EXT=''
     # keep in sync with build-binaries.sh
@@ -120,6 +123,12 @@ PACKAGE_JSON
     cp \
         out/gen-elm-wrappers-$GOOS-$GOARCH-$BINARY_VERSION$BINARY_EXT \
         npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
+    printf '  "%s": "%s",\n' \
+        "${process_platform}-${process_arch}" \
+        $arch_package_name \
+        >> npm/$package_name/arch-packages.json
 done
 
-# DAVE: build general package
+printf '}\n' >> npm/$package_name/arch-packages.json
+
+#DAVE: add main package.json
