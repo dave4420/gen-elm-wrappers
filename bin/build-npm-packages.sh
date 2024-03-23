@@ -140,6 +140,7 @@ node -e '
     };
     pj.bin = "bin/cli.js";
     delete pj.devDependencies;
+    pj.optionalDependencies = {};
     fs.readdirSync("npm").forEach((dir) => {
         if (dir === "'$package_name'") {
             return;
