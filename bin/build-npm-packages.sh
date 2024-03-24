@@ -90,24 +90,17 @@ list-binaries-to-build | while read GOOS GOARCH ; do
         arm64)
             process_arch=arm64
             ;;
-        ppc64|ppc64le)
-            process_arch=ppc64
-            ;;
         s390x)
             process_arch=s390
-            ;;
-        wasm)
-            #DAVE
             ;;
         loong64)
             process_arch=loong64
             ;;
-        mips|mipsle|mips64|mips64le)
-            #DAVE
-            ;;
         s390x)
             process_arch=s390x
             ;;
+        *)
+            continue
     esac
 
     arch_package_name=$package_name-$process_platform-$process_arch
