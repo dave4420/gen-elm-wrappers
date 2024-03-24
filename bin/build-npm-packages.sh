@@ -38,7 +38,8 @@ list-binaries-to-build() {
 }
 
 cp -r npm-main-template npm/$package_name
-printf '{\n' >> npm/$package_name/arch-packages.json
+printf '{' >> npm/$package_name/arch-packages.json
+comma=''
 
 list-binaries-to-build | while read GOOS GOARCH ; do
     BINARY_EXT=''
@@ -106,13 +107,15 @@ PACKAGE_JSON
     cp \
         out/gen-elm-wrappers-$GOOS-$GOARCH-$BINARY_VERSION$BINARY_EXT \
         npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
-    printf '  "%s": "%s",\n' \
+    printf '%s\n  "%s": "%s"' \
+        "$comma" \
         "${process_platform}-${process_arch}" \
         $arch_package_name \
         >> npm/$package_name/arch-packages.json
+    comma=','
 done
 
-printf '}\n' >> npm/$package_name/arch-packages.json
+printf '\n}\n' >> npm/$package_name/arch-packages.json
 
 node -e '
     const pj = require("./package.json");
