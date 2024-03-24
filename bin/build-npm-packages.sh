@@ -6,7 +6,6 @@ set -euo pipefail
 rm -rf npm
 mkdir npm
 
-gomplate_version=3.11.7
 package_name=gen-elm-wrappers
 
 platform="$(node -e 'console.log(process.platform)')"
@@ -31,15 +30,6 @@ case "$arch" in
         printf 'Unsupported node process.arch: %s\n' "$arch" >&2
         exit 2
 esac
-
-gomplate="gomplate_${platform}-${arch}"
-if ! [[ -x bin/$gomplate ]] ; then
-    curl https://github.com/hairyhenderson/gomplate/releases/download/v$gomplate_version/$gomplate \
-        --location \
-        --continue-at - \
-        --output bin/$gomplate
-    chmod +x bin/$gomplate
-fi
 
 # general approach taken from <https://sentry.engineering/blog/publishing-binaries-on-npm>
 
