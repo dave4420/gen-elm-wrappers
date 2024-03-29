@@ -104,6 +104,7 @@ list-binaries-to-build | while read GOOS GOARCH ; do
     "cpu": [ "$process_arch" ]
 }
 PACKAGE_JSON
+    # DAVE: add README.md telling people to use main package or download directly from GitHub
     cp \
         out/gen-elm-wrappers-$GOOS-$GOARCH-$BINARY_VERSION$BINARY_EXT \
         npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
@@ -136,3 +137,5 @@ node -e '
     process.stdout.write(JSON.stringify(pj, null, 2));
     process.stdout.write("\n");
 ' > npm/$package_name/package.json
+
+# DAVE: add README.md for main package
