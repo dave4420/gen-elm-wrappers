@@ -95,6 +95,7 @@ list-binaries-to-build | while read GOOS GOARCH ; do
             continue
     esac
 
+    # DAVE: include scope ("@dave4420/...") in arch package names
     arch_package_name=$package_name-$process_platform-$process_arch
     mkdir -p npm/$arch_package_name/bin
     cat <<PACKAGE_JSON > npm/$arch_package_name/package.json
