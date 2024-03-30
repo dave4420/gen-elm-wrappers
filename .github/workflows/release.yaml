@@ -59,6 +59,5 @@ jobs:
           gh release download ${{ github.event.inputs.version }} --dir out
       - run: bin/build-npm-packages.sh
       - name "Setup npm"
-        run: "npm config set -- '//registry.npmjs.org/:_authToken' '${{ secrets.NPM_TOKEN }}'"
+        run: "npm config set -- '//registry.npmjs.org/:_authToken' '${{ secrets.NPM_RELEASE_TOKEN }}'"
       - run: bin/publish-npm-packages.sh
-        # DAVE: set NPM_TOKEN secret in GitHub repository settings
