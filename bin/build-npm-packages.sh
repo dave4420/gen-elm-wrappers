@@ -38,6 +38,7 @@ list-binaries-to-build() {
 }
 
 cp -r npm-main-template npm/$package_name
+cp README.md npm/$package_name/README.md
 printf '{' >> npm/$package_name/arch-packages.json
 comma=''
 
@@ -104,7 +105,14 @@ list-binaries-to-build | while read GOOS GOARCH ; do
     "cpu": [ "$process_arch" ]
 }
 PACKAGE_JSON
-    # DAVE: add README.md telling people to use main package or download directly from GitHub
+    cat <<README > npm
+You should not need to install this package directly.
+
+Instead,
+
+- either install [$package_name](https://www.npmjs.com/package/$package_name)
+- or manually [download the binary for your architecture](https://github.com/dave4420/gen-elm-wrappers/releases/tag/$BINARY_VERSION)
+README
     cp \
         out/gen-elm-wrappers-$GOOS-$GOARCH-$BINARY_VERSION$BINARY_EXT \
         npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
@@ -137,5 +145,3 @@ node -e '
     process.stdout.write(JSON.stringify(pj, null, 2));
     process.stdout.write("\n");
 ' > npm/$package_name/package.json
-
-# DAVE: add README.md for main package
