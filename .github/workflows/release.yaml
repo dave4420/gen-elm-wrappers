@@ -54,7 +54,9 @@ jobs:
         with:
           node-version-file: "./.nvmrc"
           cache: npm
-      # DAVE: download files from release to out/
+      - name: Download release files
+        run: |
+          gh release download ${{ github.event.inputs.version }} --dir out
       - run: bin/build-npm-packages.sh
       - name "Setup npm"
         run: "npm config set -- '//registry.npmjs.org/:_authToken' '${{ secrets.NPM_TOKEN }}'"
