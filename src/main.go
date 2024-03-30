@@ -140,7 +140,3 @@ func main() {
 		exitCode = 1
 	}
 }
-
-// DAVE: get and save npm creds to 1password
-// DAVE: install 1password in github actions and demo it fetching text from 1password
-// DAVE: actually publish the package to npm
