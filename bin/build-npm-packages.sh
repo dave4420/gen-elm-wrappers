@@ -105,7 +105,7 @@ list-binaries-to-build | while read GOOS GOARCH ; do
     "cpu": [ "$process_arch" ]
 }
 PACKAGE_JSON
-    cat <<README > npm
+    cat <<README > npm/$arch_package_name/README.md
 You should not need to install this package directly.
 
 Instead,
