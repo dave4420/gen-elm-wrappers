@@ -45,6 +45,7 @@ jobs:
           tag_name: ${{ env.BINARY_VERSION }}
 
   publish-to-npm:
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -58,6 +59,6 @@ jobs:
         run: |
           gh release download ${{ github.event.inputs.version }} --dir out
       - run: bin/build-npm-packages.sh
-      - name "Setup npm"
+      - name: "Setup npm"
         run: "npm config set -- '//registry.npmjs.org/:_authToken' '${{ secrets.NPM_RELEASE_TOKEN }}'"
       - run: bin/publish-npm-packages.sh
