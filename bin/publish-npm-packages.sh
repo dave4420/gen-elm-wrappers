@@ -13,9 +13,8 @@ for package in $(find . -type d -exec sh -c '[ -f {}/package.json ]' \; -print) 
     fi
     npm view "$(
         node -e "
-            const package = require('$package/package.json');
+            const package = require('$package/package.json');"'
             process.stdout.write(`${package.name}@${package.version}\n`);
-        "
-        # DAVE: fix quoting bug
+        '
     )"
 done
