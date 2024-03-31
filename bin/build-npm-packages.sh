@@ -114,6 +114,7 @@ node -e '
     delete pj.devDependencies;
     pj.optionalDependencies = {};
     fs.readdirSync("npm").forEach((dir) => {
+        // DAVE: recurse into @dave4420
         if (dir === "'$package_name'") {
             return;
         }
