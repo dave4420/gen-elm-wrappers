@@ -4,7 +4,10 @@ IFS=$'\n\t'
 
 cd npm
 
-for package in $(find . -type d -exec sh -c '[ -f {}/package.json ]' \; -print) ; do
+for package in $(
+    find . -type d -exec sh -c '[ -f {}/package.json ]' \; -print |
+    perl -e 'print sort { length $b <=> length $a } <>'
+) ; do
     # ordered so that the package with the shortest name is published last,
     # after its dependencies
     if ! npm publish $package ; then
@@ -12,8 +15,8 @@ for package in $(find . -type d -exec sh -c '[ -f {}/package.json ]' \; -print) 
     fi
     npm view "$(
         node -e "
-            const package = require('$package/package.json');
+            const package = require('$package/package.json');"'
             process.stdout.write(`${package.name}@${package.version}\n`);
-        "
+        '
     )"
 done
