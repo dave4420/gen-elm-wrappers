@@ -5,7 +5,7 @@ like to use for the keys of a `Dict`, or the elements of a `Set`.
 Unfortunately, for both of these cases, your type has to be `comparable`,
 and custom types cannot be `comparable`. What to do?
 
-Solution: add some config to your `elm.json`, run `gen-elm-wrappers`,
+Solution: add a `gen-elm-wrappers.json`, run `gen-elm-wrappers`,
 and it will generate one or more Elm modules that wrap `Dict` or `Set`,
 so that you can use them with your custom type.
 
@@ -13,9 +13,13 @@ so that you can use them with your custom type.
 
 I haven’t wrapped this all up nicely in an NPM package yet.
 
-For now, you need to run:
+You can [download prebuilt binaries](https://github.com/dave4420/gen-elm-wrappers/releases).
+Each file is a self-contained executable for the appropriate platform.
+Rename it to `gen-elm-wrappers` and move it to somewhere on your `$PATH`.
 
-- `brew install go`
+Or to install from source:
+
+- `brew install go` (or whatever the best way of installing Go on your laptop is)
   - don’t worry, you don’t need to know Go to _use_ this
 - `npm ci`
 - `npm test`
@@ -122,7 +126,7 @@ I’m not looking for a job, no.
 - Full stack or backend
 - Permanent only (no contracting)
 - IC only (no line management)
-- Remote (UK timezone ± 1 hour) or on-site/hybrid (London/Medway); not willing to relocate
+- Remote (UK timezone ± an hour or two) or on-site/hybrid (London/Medway); not willing to relocate
 - I prefer to work with statically typed languages (e.g. Typescript, not plain Javascript)
 - not blockchain (except for catching crims), not ad tech (unless it’s surveillance-free),
   don’t really want to work for a hedge fund
