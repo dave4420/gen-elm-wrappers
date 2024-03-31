@@ -10,4 +10,10 @@ for package in $(find . -type d -exec sh -c '[ -f {}/package.json ]' \; -print) 
     if ! npm publish $package ; then
         printf 'Error code %d; hopefully already published?\n' $?
     fi
+    npm view "$(
+        node -e "
+            const package = require('$package/package.json');
+            process.stdout.write(`${package.name}@${package.version}\n`);
+        "
+    )"
 done
