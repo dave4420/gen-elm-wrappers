@@ -7,6 +7,7 @@ rm -rf npm
 mkdir npm
 
 package_name=gen-elm-wrappers
+scope=@dave4420
 
 # general approach taken from <https://sentry.engineering/blog/publishing-binaries-on-npm>
 
@@ -72,7 +73,7 @@ list-binaries-to-build | while read GOOS GOARCH ; do
             continue
     esac
 
-    arch_package_name=@dave4420/$package_name-$process_platform-$process_arch
+    arch_package_name=$scope/$package_name-$process_platform-$process_arch
     mkdir -p npm/$arch_package_name/bin
     cat <<PACKAGE_JSON > npm/$arch_package_name/package.json
 {
@@ -113,12 +114,8 @@ node -e '
     pj.bin = "bin/cli.js";
     delete pj.devDependencies;
     pj.optionalDependencies = {};
-    fs.readdirSync("npm").forEach((dir) => {
-        // DAVE: recurse into @dave4420
-        if (dir === "'$package_name'") {
-            return;
-        }
-        pj.optionalDependencies[dir] = process.env.BINARY_VERSION;
+    fs.readdirSync("npm/'$scope'").forEach((dir) => {
+        pj.optionalDependencies[`'$scope'/${dir}`] = process.env.BINARY_VERSION;
     });
     process.stdout.write(JSON.stringify(pj, null, 2));
     process.stdout.write("\n");
