@@ -10,7 +10,7 @@ for package in $(
 ) ; do
     # ordered so that the package with the shortest name is published last,
     # after its dependencies
-    if ! npm publish $package ; then
+    if ! npm publish --access public $package ; then
         printf 'Error code %d; hopefully already published?\n' $?
     fi
     npm view "$(
