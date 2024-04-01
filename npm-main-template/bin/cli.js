@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Lookup table for all platforms and binary distribution packages
-const BINARY_DISTRIBUTION_PACKAGES = require("./arch-packages.json");
+const BINARY_DISTRIBUTION_PACKAGES = require("../arch-packages.json");
 
 // Windows binaries end with .exe so we need to special case them.
 const binaryName =

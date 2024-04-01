@@ -94,6 +94,7 @@ README
     cp \
         out/gen-elm-wrappers-$GOOS-$GOARCH-$BINARY_VERSION$BINARY_EXT \
         npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
+    chmod +x npm/$arch_package_name/bin/gen-elm-wrappers$BINARY_EXT
     printf '%s\n  "%s": "%s"' \
         "$comma" \
         "${process_platform}-${process_arch}" \
