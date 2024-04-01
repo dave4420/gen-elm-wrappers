@@ -11,11 +11,16 @@ so that you can use them with your custom type.
 
 ## Installing
 
-I haven’t wrapped this all up nicely in an NPM package yet.
+If you’re using node anyway, you can download it from NPM: `npm install
+--save-dev gen-elm-wrappers` or install it globally or using yarn/pnpm/whatever.
+This won’t install it on your `$PATH` unless your `$PATH` already includes
+`./node_modules/.bin`. You might only want to run it via a script in
+your `package.json` anyway.
 
-You can [download prebuilt binaries](https://github.com/dave4420/gen-elm-wrappers/releases).
+Otherwise, you can [download prebuilt binaries](https://github.com/dave4420/gen-elm-wrappers/releases).
 Each file is a self-contained executable for the appropriate platform.
 Rename it to `gen-elm-wrappers` and move it to somewhere on your `$PATH`.
+`chmod +x` it if you’re not on Windows.
 
 Or to install from source:
 
@@ -92,8 +97,6 @@ Actually… the test script won’t run on Windows. (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Wrap it all up nicely in an NPM package that includes/downloads
-  prebuilt binaries (like the `elm` NPM package does)
 - Support `Set`
 - Support type variables in key types
 - Support versions of `elm-community/dict-extra` before 2.4.0
