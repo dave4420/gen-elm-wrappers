@@ -50,3 +50,52 @@ func TestDecodesDictModuleConfig(t *testing.T) {
 		t.Errorf("Unexpected output: %v", output)
 	}
 }
+
+func TestDecodesSetModuleConfig(t *testing.T) {
+	// given
+	input := `{
+		"generate": [
+			{
+				"underlying-type": "Set",
+				"wrapper-type": "Type.SetCabbage.SetCabbage",
+				"public-key-type": "Type.Cabbage.Cabbage",
+				"private-key-type": "String",
+				"private-key-to-public-key": "Type.Cabbage.fromString",
+				"public-key-to-private-key": "Type.Cabbage.toString"
+			}
+		]
+	}`
+
+	expectedModule := setModule{
+		wrapperType: identifier{
+			moduleName: "Type.SetCabbage",
+			name:       "SetCabbage",
+		},
+		publicKeyType: identifier{
+			moduleName: "Type.Cabbage",
+			name:       "Cabbage",
+		},
+		privateKeyType: identifier{
+			name: "String",
+		},
+		wrapKeyFn: identifier{
+			moduleName: "Type.Cabbage",
+			name:       "fromString",
+		},
+		unwrapKeyFn: identifier{
+			moduleName: "Type.Cabbage",
+			name:       "toString",
+		},
+	}
+
+	// when
+	output, err := decodeConfigFromBlob([]byte(input))
+
+	// then
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if len(output.modules) != 1 || output.modules[0] != expectedModule {
+		t.Errorf("Unexpected output: %v", output)
+	}
+}
