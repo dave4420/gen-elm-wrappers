@@ -52,6 +52,19 @@ func decodeElmConfig(root interface{}) (elmConfig, error) {
 		ret.dictExtraVersion = &dictExtraVersion
 	}
 
+	setExtraVersion, ok := directObject["stoeffel/set-extra"]
+	var setExtraVersionString string
+	if ok {
+		setExtraVersionString, ok = setExtraVersion.(string)
+	}
+	if ok {
+		setExtraVersion, err := parseVersion(setExtraVersionString)
+		if err != nil {
+			return ret, err
+		}
+		ret.setExtraVersion = &setExtraVersion
+	}
+
 	return ret, nil
 }
 
