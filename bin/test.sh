@@ -31,12 +31,16 @@ import Time
 maybePosixFromMillis : Int -> Maybe Time.Posix
 maybePosixFromMillis = Time.millisToPosix >> Just
 EOF
-        cat >src/Main.elm <<EOF
-module Main exposing (main)
-import Type.DictTimePosix
-main : Program () () Never
-main = Debug.todo "main"
-EOF
+        (
+            shift 3
+            printf '%s\n' 'module Main exposing (main)'
+            for module ; do
+                printf 'import %s\n' "$module"
+            done
+            printf '%s\n' \
+                'main : Program () () Never' \
+                'main = Debug.todo "main"'
+        ) >src/Main.elm
 
         ../gen-elm-wrappers
 
@@ -85,7 +89,7 @@ elm_json_core_only='
 }
 '
 
-elm_json_with_extras='
+elm_json_with_dict_extra='
 {
     "type": "application",
     "source-directories": [
@@ -162,7 +166,7 @@ elm_json_with_v1_dict_extra='
 }
 '
 
-gen_elm_wrappers_json='
+gen_elm_wrappers_dict_json='
 {
     "generate": [
         {
@@ -180,13 +184,13 @@ gen_elm_wrappers_json='
 go test github.com/dave4420/gen-elm-wrappers/src
 BINARY_NAME=gen-elm-wrappers BINARY_VERSION='?.?.?' bin/build-binary.sh
 
-expect_success 'core only' "$elm_json_core_only" "$gen_elm_wrappers_json"
+expect_success 'dict with core only' "$elm_json_core_only" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
 
-expect_success 'dict-extra included' "$elm_json_with_extras" "$gen_elm_wrappers_json"
+expect_success 'dict with dict-extra included' "$elm_json_with_dict_extra" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
 
-expect_failure_to_generate 'far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_json"
+expect_failure_to_generate 'dict with far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
 
-expect_failure_to_generate 'v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_json"
+expect_failure_to_generate 'dict with v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
 
 expect_files_to_contain_current_year LICENSE
 
