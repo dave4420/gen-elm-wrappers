@@ -9,12 +9,13 @@ func (module setModule) name() string {
 func (module setModule) source(elmConfig elmConfig) ([]string, error) {
 	definitions := []definition{}
 
-	// coreDefs, err := module.coreDefs(elmConfig.elmCoreVersion)
-	// if err != nil {
-	// 	return []string{}, err
-	// }
-	// definitions = append(definitions, coreDefs...)
+	coreDefs, err := module.coreDefs(elmConfig.elmCoreVersion)
+	if err != nil {
+		return []string{}, err
+	}
+	definitions = append(definitions, coreDefs...)
 
+	// DAVE: uncomment
 	// extraDefs, err := module.extraDefs(elmConfig.dictExtraVersion)
 	// if err != nil {
 	// 	return []string{}, err
@@ -26,15 +27,15 @@ func (module setModule) source(elmConfig elmConfig) ([]string, error) {
 		exports = append(exports, export.localName)
 	}
 
-	var dictExtraImportLine string
-	if elmConfig.dictExtraVersion != nil {
-		dictExtraImportLine = "import Dict.Extra"
+	var setExtraImportLine string
+	if elmConfig.setExtraVersion != nil {
+		setExtraImportLine = "import Set.Extra"
 	}
 
 	lines := []string{
 		"module " + module.wrapperType.moduleName + " exposing (" + strings.Join(exports, ", ") + ")",
-		"import Dict exposing (Dict)",
-		dictExtraImportLine,
+		"import Set exposing (Set)",
+		setExtraImportLine,
 		module.publicKeyType.importLine(),
 		module.privateKeyType.importLine(),
 		module.wrapKeyFn.importLine(),
