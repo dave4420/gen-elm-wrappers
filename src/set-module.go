@@ -15,12 +15,11 @@ func (module setModule) source(elmConfig elmConfig) ([]string, error) {
 	}
 	definitions = append(definitions, coreDefs...)
 
-	// DAVE: uncomment
-	// extraDefs, err := module.extraDefs(elmConfig.dictExtraVersion)
-	// if err != nil {
-	// 	return []string{}, err
-	// }
-	// definitions = append(definitions, extraDefs...)
+	extraDefs, err := module.extraDefs(elmConfig.setExtraVersion)
+	if err != nil {
+		return []string{}, err
+	}
+	definitions = append(definitions, extraDefs...)
 
 	exports := []string{}
 	for _, export := range definitions {
