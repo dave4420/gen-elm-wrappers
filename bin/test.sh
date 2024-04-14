@@ -130,6 +130,8 @@ elm_json_with_set_extra='
             "stoeffel/set-extra": "1.2.3"
         },
         "indirect": {
+            "elm/html": "1.0.0",
+            "elm/virtual-dom": "1.0.3"
         }
     },
     "test-dependencies": {
@@ -259,7 +261,7 @@ expect_failure_to_generate 'dict with v1 dict-extra' "$elm_json_with_v1_dict_ext
 expect_success 'set with core only' "$elm_json_core_only" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 expect_success 'set with set-extra included' "$elm_json_with_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 expect_failure_to_generate 'set with far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_set_json" Type.SetTimePosix
-expect_failure_to_generate 'sett with v1.1 set-extra' "$elm_json_with_v1_1_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
+expect_failure_to_generate 'set with v1.1 set-extra' "$elm_json_with_v1_1_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 
 expect_files_to_contain_current_year LICENSE
 
