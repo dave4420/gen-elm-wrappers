@@ -20,6 +20,8 @@ func (module setModule) coreDefs(elmCoreVersion version) ([]definition, error) {
 			module.unionDef(),
 			module.intersectDef(),
 			module.diffDef(),
+			module.toListDef(),
+			module.fromListDef(),
 		}, nil
 	}
 	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
@@ -149,6 +151,28 @@ func (module setModule) diffDef() definition {
 		source: []string{
 			"diff : " + module.wrapperType.name + " -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
 			"diff (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Set.diff d1 d2)",
+		},
+	}
+}
+
+// Lists
+
+func (module setModule) toListDef() definition {
+	return definition{
+		localName: "toList",
+		source: []string{
+			"toList : " + module.wrapperType.name + " -> List " + module.publicKeyType.fullName(),
+			"toList (" + module.wrapperType.name + " d) = Set.toList d |> List.filterMap " + module.wrapKeyFn.fullName(),
+		},
+	}
+}
+
+func (module setModule) fromListDef() definition {
+	return definition{
+		localName: "fromList",
+		source: []string{
+			"fromList : List " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name,
+			"fromList l = " + module.wrapperType.name + " (Set.fromList (List.map " + module.unwrapKeyFn.fullName() + " l))",
 		},
 	}
 }
