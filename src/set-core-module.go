@@ -22,6 +22,10 @@ func (module setModule) coreDefs(elmCoreVersion version) ([]definition, error) {
 			module.diffDef(),
 			module.toListDef(),
 			module.fromListDef(),
+			module.foldlDef(),
+			module.foldrDef(),
+			module.filterDef(),
+			module.partitionDef(),
 		}, nil
 	}
 	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
@@ -177,4 +181,68 @@ func (module setModule) fromListDef() definition {
 	}
 }
 
-// DAVE: add actual wrappers
+// Transform
+
+func (module setModule) foldlDef() definition {
+	return definition{
+		localName: "foldl",
+		source: []string{
+			"foldl : (" + module.publicKeyType.fullName() + " -> a -> a) -> a -> " + module.wrapperType.name + " -> a",
+			"foldl f z (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k acc = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> acc",
+			"      Just kk -> f kk acc",
+			"  in Set.foldl g z d",
+		},
+	}
+}
+
+func (module setModule) foldrDef() definition {
+	return definition{
+		localName: "foldr",
+		source: []string{
+			"foldr : (" + module.publicKeyType.fullName() + " -> a -> a) -> a -> " + module.wrapperType.name + " -> a",
+			"foldr f z (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k acc = case " + module.wrapKeyFn.fullName() + " k of",
+			"      Nothing -> acc",
+			"      Just kk -> f kk acc",
+			"  in Set.foldr g z d",
+		},
+	}
+}
+
+func (module setModule) filterDef() definition {
+	return definition{
+		localName: "filter",
+		source: []string{
+			"filter : (" + module.publicKeyType.fullName() + " -> Bool) -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
+			"filter f (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k =",
+			"      " + module.wrapKeyFn.fullName() + " k",
+			"        |> Maybe.map (\\kk -> f kk)",
+			"        |> Maybe.withDefault False",
+			"  in",
+			"    " + module.wrapperType.name + " (Set.filter g d)",
+		},
+	}
+}
+
+func (module setModule) partitionDef() definition {
+	return definition{
+		localName: "partition",
+		source: []string{
+			"partition : (" + module.publicKeyType.fullName() + " -> Bool) -> " + module.wrapperType.name + " -> (" + module.wrapperType.name + ", " + module.wrapperType.name + ")",
+			"partition f (" + module.wrapperType.name + " d) = ",
+			"  let",
+			"    g k =",
+			"      " + module.wrapKeyFn.fullName() + " k",
+			"        |> Maybe.map (\\kk -> f kk)",
+			"        |> Maybe.withDefault False",
+			"  in",
+			"    Tuple.mapBoth " + module.wrapperType.name + " " + module.wrapperType.name + " (Set.partition g d)",
+		},
+	}
+}
