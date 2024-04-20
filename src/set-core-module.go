@@ -14,6 +14,9 @@ func (module setModule) coreDefs(elmCoreVersion version) ([]definition, error) {
 			module.singletonDef(),
 			module.insertDef(),
 			module.removeDef(),
+			module.isEmptyDef(),
+			module.memberDef(),
+			module.sizeDef(),
 		}, nil
 	}
 	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
@@ -79,6 +82,38 @@ func (module setModule) removeDef() definition {
 		source: []string{
 			"remove : " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
 			"remove k (" + module.wrapperType.name + " d) = " + module.wrapperType.name + " (Set.remove (" + module.unwrapKeyFn.fullName() + " k) d)",
+		},
+	}
+}
+
+// Query
+
+func (module setModule) isEmptyDef() definition {
+	return definition{
+		localName: "isEmpty",
+		source: []string{
+			"isEmpty : " + module.wrapperType.name + " -> Bool",
+			"isEmpty (" + module.wrapperType.name + " d) = Set.isEmpty d",
+		},
+	}
+}
+
+func (module setModule) memberDef() definition {
+	return definition{
+		localName: "member",
+		source: []string{
+			"member : " + module.publicKeyType.fullName() + " -> " + module.wrapperType.name + " -> Bool",
+			"member k (" + module.wrapperType.name + " d) = Set.member (" + module.unwrapKeyFn.fullName() + " k) d",
+		},
+	}
+}
+
+func (module setModule) sizeDef() definition {
+	return definition{
+		localName: "size",
+		source: []string{
+			"size : " + module.wrapperType.name + " -> Int",
+			"size (" + module.wrapperType.name + " d) = Set.size d",
 		},
 	}
 }
