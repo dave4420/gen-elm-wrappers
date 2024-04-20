@@ -17,6 +17,9 @@ func (module setModule) coreDefs(elmCoreVersion version) ([]definition, error) {
 			module.isEmptyDef(),
 			module.memberDef(),
 			module.sizeDef(),
+			module.unionDef(),
+			module.intersectDef(),
+			module.diffDef(),
 		}, nil
 	}
 	return []definition{}, errors.New("Versions " + elmCoreVersion.toString() + " of elm/core " +
@@ -114,6 +117,38 @@ func (module setModule) sizeDef() definition {
 		source: []string{
 			"size : " + module.wrapperType.name + " -> Int",
 			"size (" + module.wrapperType.name + " d) = Set.size d",
+		},
+	}
+}
+
+// Combine
+
+func (module setModule) unionDef() definition {
+	return definition{
+		localName: "union",
+		source: []string{
+			"union : " + module.wrapperType.name + " -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
+			"union (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Set.union d1 d2)",
+		},
+	}
+}
+
+func (module setModule) intersectDef() definition {
+	return definition{
+		localName: "intersect",
+		source: []string{
+			"intersect : " + module.wrapperType.name + " -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
+			"intersect (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Set.intersect d1 d2)",
+		},
+	}
+}
+
+func (module setModule) diffDef() definition {
+	return definition{
+		localName: "diff",
+		source: []string{
+			"diff : " + module.wrapperType.name + " -> " + module.wrapperType.name + " -> " + module.wrapperType.name,
+			"diff (" + module.wrapperType.name + " d1) (" + module.wrapperType.name + " d2) = " + module.wrapperType.name + " (Set.diff d1 d2)",
 		},
 	}
 }
