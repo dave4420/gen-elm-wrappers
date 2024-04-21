@@ -65,7 +65,32 @@ To wrap `Dict`, the module definition is an object containing these keys:
     with a type like `PrivateKey -> PublicKey` here — you may need
     to write a wrapper function in your code with the correct type
 
-(Currently only `Dict` is supported.)
+To wrap `Set`, the module definition is an object containing these keys:
+
+- `underlying-type`
+  - Must be `"Set"`
+- `wrapper-type`
+  - The fully-qualified name of the type to generate. The generated
+    code will be stored in the module named here. e.g. to generate
+    a `Foo.Bar` module containing a `MySet` type, you would put
+    `"Foo.Bar.MySet"` here
+- `public-key-type`
+  - The fully-qualified name of your custom type that you want to use
+    as elements in the set
+- `private-key-type`
+  - The type of elements to use in the underlying `Set`. This will
+    typically be `Int` or `String`, but can be any concrete
+    `comparable` type
+- `public-key-to-private-key`
+  - The fully-qualified name of a function that converts values from
+    `public-key-type` to `private-key-type`. i.e. it has a type
+    like `PublicKey -> PrivateKey`
+- `private-key-to-public-key`
+  - The fully-qualified name of a function that converts values from
+    `private-key-type` to `public-key-type`. It has a type
+    like `PrivateKey -> Maybe PublicKey`. You can’t use a function
+    with a type like `PrivateKey -> PublicKey` here — you may need
+    to write a wrapper function in your code with the correct type
 
 Then, run `gen-elm-wrappers`. It expects `elm.json` to be in the
 current directory. It writes the generated code to the appropriate
@@ -74,6 +99,10 @@ location inside your `src` directory.
 For `Dict`s, the generated code wraps all functions from the core `Dict`
 module. If your program also has `elm-community/dict-extra` as a direct
 dependency, it will also wrap several functions from `Dict.Extra`.
+
+For `Set`s, the generated code wraps all functions from the core `Set`
+module. If your program also has `stoeffel/set-extra` as a direct
+dependency, it will also wrap some functions from `Set.Extra`.
 
 If `elm-format` is on your PATH (and not a relative path, i.e. not
 starting with `.` or `..`) then the generated code will be beautifully
