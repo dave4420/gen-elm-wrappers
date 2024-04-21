@@ -110,9 +110,53 @@ formatted. (This is the case, for example, when `elm-format` and
 `gen-elm-wrappers` were both installed locally using npm, and you’re
 running `gen-elm-wrappers` via npm.)
 
-## Examples
+## Example
 
-See the [`bin/test.sh`](bin/test.sh) script.
+If you put this in `src/Helpers.elm`:
+
+```
+module Helpers exposing (..)
+
+import Time
+
+maybePosixFromMillis : Int -> Maybe Time.Posix
+maybePosixFromMillis millis =
+    Just <| Time.millisToPosix millis
+```
+
+and then you put this in `gen-elm-wrappers.json`:
+
+```
+{
+    "generate": [
+        {
+            "underlying-type": "Dict",
+            "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        },
+        {
+            "underlying-type": "Set",
+            "wrapper-type": "Type.SetTimePosix.SetTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        }
+    ]
+}
+```
+
+then `gen-elm-wrappers` will produce
+
+- a `Type.DictTimePosix` module in `src/Type/DictTimePosix.elm`,
+  containing a `DictTimePosix v` type that acts like a `Dict` with
+  `Time.Posix` keys and `v` values
+- a `Type.SetTimePosix` module in `src/Type/SetTimePosix.elm`,
+  containing a `SetTimePosix` type that acts like a `Set` with
+  `Time.Posix` elements
 
 ## Portability
 
