@@ -158,6 +158,17 @@ then `gen-elm-wrappers` will produce
   containing a `SetTimePosix` type that acts like a `Set` with
   `Time.Posix` elements
 
+## Limitations
+
+- It won’t work if you try to wrap more than one type into the same module
+- `Set.map` is not wrapped
+- `Dict.Extra`:
+  - `removeMany` and `keepOnly` are not wrapped, even when `Set` is also
+    being wrapped for the key type
+  - `mapKeys` and `invert` are not wrapped
+- `Set.Extra`:
+  - `concatMap` and `filterMap` are not wrapped
+
 ## Portability
 
 I’ve only tested this on my Mac. But it’s written in Go, and I hear
