@@ -39,3 +39,13 @@ func parseVersion(s string) (version, error) {
 func (x version) isSameMajorAndNotEarlierMinorThan(y version) bool {
 	return x.major == y.major && x.minor >= y.minor
 }
+
+func versionPtrEquals(x *version, y *version) bool {
+	if x == nil && y == nil {
+		return true
+	}
+	if x == nil || y == nil {
+		return false
+	}
+	return *x == *y
+}
