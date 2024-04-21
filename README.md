@@ -65,7 +65,32 @@ To wrap `Dict`, the module definition is an object containing these keys:
     with a type like `PrivateKey -> PublicKey` here — you may need
     to write a wrapper function in your code with the correct type
 
-(Currently only `Dict` is supported.)
+To wrap `Set`, the module definition is an object containing these keys:
+
+- `underlying-type`
+  - Must be `"Set"`
+- `wrapper-type`
+  - The fully-qualified name of the type to generate. The generated
+    code will be stored in the module named here. e.g. to generate
+    a `Foo.Bar` module containing a `MySet` type, you would put
+    `"Foo.Bar.MySet"` here
+- `public-key-type`
+  - The fully-qualified name of your custom type that you want to use
+    as elements in the set
+- `private-key-type`
+  - The type of elements to use in the underlying `Set`. This will
+    typically be `Int` or `String`, but can be any concrete
+    `comparable` type
+- `public-key-to-private-key`
+  - The fully-qualified name of a function that converts values from
+    `public-key-type` to `private-key-type`. i.e. it has a type
+    like `PublicKey -> PrivateKey`
+- `private-key-to-public-key`
+  - The fully-qualified name of a function that converts values from
+    `private-key-type` to `public-key-type`. It has a type
+    like `PrivateKey -> Maybe PublicKey`. You can’t use a function
+    with a type like `PrivateKey -> PublicKey` here — you may need
+    to write a wrapper function in your code with the correct type
 
 Then, run `gen-elm-wrappers`. It expects `elm.json` to be in the
 current directory. It writes the generated code to the appropriate
@@ -75,15 +100,74 @@ For `Dict`s, the generated code wraps all functions from the core `Dict`
 module. If your program also has `elm-community/dict-extra` as a direct
 dependency, it will also wrap several functions from `Dict.Extra`.
 
+For `Set`s, the generated code wraps all functions from the core `Set`
+module. If your program also has `stoeffel/set-extra` as a direct
+dependency, it will also wrap some functions from `Set.Extra`.
+
 If `elm-format` is on your PATH (and not a relative path, i.e. not
 starting with `.` or `..`) then the generated code will be beautifully
 formatted. (This is the case, for example, when `elm-format` and
 `gen-elm-wrappers` were both installed locally using npm, and you’re
 running `gen-elm-wrappers` via npm.)
 
-## Examples
+## Example
 
-See the [`bin/test.sh`](bin/test.sh) script.
+If you put this in `src/Helpers.elm`:
+
+```
+module Helpers exposing (..)
+
+import Time
+
+maybePosixFromMillis : Int -> Maybe Time.Posix
+maybePosixFromMillis millis =
+    Just <| Time.millisToPosix millis
+```
+
+and then you put this in `gen-elm-wrappers.json`:
+
+```
+{
+    "generate": [
+        {
+            "underlying-type": "Dict",
+            "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        },
+        {
+            "underlying-type": "Set",
+            "wrapper-type": "Type.SetTimePosix.SetTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        }
+    ]
+}
+```
+
+then `gen-elm-wrappers` will produce
+
+- a `Type.DictTimePosix` module in `src/Type/DictTimePosix.elm`,
+  containing a `DictTimePosix v` type that acts like a `Dict` with
+  `Time.Posix` keys and `v` values
+- a `Type.SetTimePosix` module in `src/Type/SetTimePosix.elm`,
+  containing a `SetTimePosix` type that acts like a `Set` with
+  `Time.Posix` elements
+
+## Limitations
+
+- It won’t work if you try to wrap more than one type into the same module
+- `Set.map` is not wrapped
+- `Dict.Extra`:
+  - `removeMany` and `keepOnly` are not wrapped, even when `Set` is also
+    being wrapped for the key type
+  - `mapKeys` and `invert` are not wrapped
+- `Set.Extra`:
+  - `concatMap` and `filterMap` are not wrapped
 
 ## Portability
 
@@ -97,10 +181,11 @@ Actually… the test script won’t run on Windows. (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Support `Set`
-- Support type variables in key types
+- Support type variables in dict key types and set element types
 - Support versions of `elm-community/dict-extra` before 2.4.0
-- Wrap more functions from `elm-community/dict-extra`
+- Support versions of `stoeffel/set-extra` before 1.2.0
+- Wrap more functions from `elm-community/dict-extra` and
+  `stoeffel/set-extra`
 - Support writing the generated code to a directory other than `src`;
   optionally wipe it first
 - Write more unit tests around reading the config from `elm.json`
@@ -123,7 +208,8 @@ This runs the unit tests whenever the source code changes.
 
 ## If you’re a hiring manager or a recruiter
 
-I’m not looking for a job, no.
+I’m not looking for a job, no. Although I’m always interested in hearing
+about jobs involving Elm and/or climate tech.
 
 - Senior / tech lead roles
 - Full stack or backend
@@ -137,4 +223,5 @@ I’m not looking for a job, no.
   und Englisch is meine Muttersprache.
 
 Please [connect to me on LinkedIn](https://www.linkedin.com/in/dave-hinton-7507b4ab)
-and mention this repo in your invitation.
+and mention this repo in your invitation (and don’t bury the lede if you want to
+talk to me about an Elm or climate tech job).
