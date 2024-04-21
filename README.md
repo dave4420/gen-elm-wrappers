@@ -170,10 +170,11 @@ Actually… the test script won’t run on Windows. (Unless you use WSL?)
 
 This isn’t in priority order yet and I’ve probably forgotten something.
 
-- Support `Set`
-- Support type variables in key types
+- Support type variables in dict key types and set element types
 - Support versions of `elm-community/dict-extra` before 2.4.0
-- Wrap more functions from `elm-community/dict-extra`
+- Support versions of `stoeffel/set-extra` before 1.2.0
+- Wrap more functions from `elm-community/dict-extra` and
+  `stoeffel/set-extra`
 - Support writing the generated code to a directory other than `src`;
   optionally wipe it first
 - Write more unit tests around reading the config from `elm.json`
@@ -196,7 +197,8 @@ This runs the unit tests whenever the source code changes.
 
 ## If you’re a hiring manager or a recruiter
 
-I’m not looking for a job, no.
+I’m not looking for a job, no. Although I’m always interested in hearing
+about jobs involving Elm and/or climate tech.
 
 - Senior / tech lead roles
 - Full stack or backend
@@ -210,4 +212,5 @@ I’m not looking for a job, no.
   und Englisch is meine Muttersprache.
 
 Please [connect to me on LinkedIn](https://www.linkedin.com/in/dave-hinton-7507b4ab)
-and mention this repo in your invitation.
+and mention this repo in your invitation (and don’t bury the lede if you want to
+talk to me about an Elm or climate tech job).
