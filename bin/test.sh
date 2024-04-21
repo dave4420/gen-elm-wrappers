@@ -250,6 +250,29 @@ gen_elm_wrappers_set_json='
 }
 '
 
+gen_elm_wrappers_both_json='
+{
+    "generate": [
+        {
+            "underlying-type": "Dict",
+            "wrapper-type": "Type.DictTimePosix.DictTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        },
+        {
+            "underlying-type": "Set",
+            "wrapper-type": "Type.SetTimePosix.SetTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        }
+    ]
+}
+'
+
 go test github.com/dave4420/gen-elm-wrappers/src
 BINARY_NAME=gen-elm-wrappers BINARY_VERSION='?.?.?' bin/build-binary.sh
 
@@ -262,6 +285,8 @@ expect_success 'set with core only' "$elm_json_core_only" "$gen_elm_wrappers_set
 expect_success 'set with set-extra included' "$elm_json_with_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 expect_failure_to_generate 'set with far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 expect_failure_to_generate 'set with v1.1 set-extra' "$elm_json_with_v1_1_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
+
+expect_success 'both dict and set with core only' "$elm_json_core_only" "$gen_elm_wrappers_both_json" Type.DictTimePosix Type.SetTimePosix
 
 expect_files_to_contain_current_year LICENSE
 
