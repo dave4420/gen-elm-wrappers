@@ -7,21 +7,9 @@ import (
 	"os"
 )
 
-func decodeModule(moduleJson interface{}, path string) (module, error) {
-	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
-	if err != nil {
-		return nil, err
-	}
-
-	underlyingTypeString, ok := underlyingType.(string)
-	if !ok {
-		return nil, errors.New(path + "['underlying-type'] is not a string")
-	}
-	if underlyingTypeString != "Dict" {
-		return nil, errors.New(path + "is not wrapping a 'Dict'")
-	}
-
+func decodeDictModule(moduleJson interface{}, path string) (dictModule, error) {
 	module := dictModule{}
+	var err error
 
 	module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
 	if err != nil {
@@ -49,6 +37,59 @@ func decodeModule(moduleJson interface{}, path string) (module, error) {
 
 	module.unwrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-to-private-key")
 	return module, err
+}
+
+func decodeSetModule(moduleJson interface{}, path string) (setModule, error) {
+	module := setModule{}
+	var err error
+
+	module.wrapperType, err = getObjectPropertyIdentifier(moduleJson, path, "wrapper-type")
+	if err != nil {
+		return module, err
+	}
+	if module.wrapperType.moduleName == "" {
+		return module, errors.New(path + "['wrapperType'] should be a fully qualified type name, " +
+			"but either the type name or the module name is missing")
+	}
+
+	module.publicKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-type")
+	if err != nil {
+		return module, err
+	}
+
+	module.privateKeyType, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-type")
+	if err != nil {
+		return module, err
+	}
+
+	module.wrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "private-key-to-public-key")
+	if err != nil {
+		return module, err
+	}
+
+	module.unwrapKeyFn, err = getObjectPropertyIdentifier(moduleJson, path, "public-key-to-private-key")
+	return module, err
+}
+
+func decodeModule(moduleJson interface{}, path string) (module, error) {
+	underlyingType, err := getObjectProperty(moduleJson, path, "underlying-type")
+	if err != nil {
+		return nil, err
+	}
+
+	underlyingTypeString, ok := underlyingType.(string)
+	if !ok {
+		return nil, errors.New(path + "['underlying-type'] is not a string")
+	}
+
+	switch underlyingTypeString {
+	case "Dict":
+		return decodeDictModule(moduleJson, path)
+	case "Set":
+		return decodeSetModule(moduleJson, path)
+	default:
+		return nil, errors.New(path + "is wrapping an unsupported type ('" + underlyingTypeString + "')")
+	}
 }
 
 func decodeConfig(root interface{}) (config, error) {

@@ -17,3 +17,11 @@ type dictModule struct {
 	wrapKeyFn      identifier
 	unwrapKeyFn    identifier
 }
+
+type setModule struct {
+	wrapperType    identifier
+	publicKeyType  identifier
+	privateKeyType identifier
+	wrapKeyFn      identifier
+	unwrapKeyFn    identifier
+}

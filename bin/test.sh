@@ -31,12 +31,16 @@ import Time
 maybePosixFromMillis : Int -> Maybe Time.Posix
 maybePosixFromMillis = Time.millisToPosix >> Just
 EOF
-        cat >src/Main.elm <<EOF
-module Main exposing (main)
-import Type.DictTimePosix
-main : Program () () Never
-main = Debug.todo "main"
-EOF
+        (
+            shift 3
+            printf '%s\n' 'module Main exposing (main)'
+            for module ; do
+                printf 'import %s\n' "$module"
+            done
+            printf '%s\n' \
+                'main : Program () () Never' \
+                'main = Debug.todo "main"'
+        ) >src/Main.elm
 
         ../gen-elm-wrappers
 
@@ -85,7 +89,7 @@ elm_json_core_only='
 }
 '
 
-elm_json_with_extras='
+elm_json_with_dict_extra='
 {
     "type": "application",
     "source-directories": [
@@ -100,6 +104,34 @@ elm_json_with_extras='
             "elm-community/dict-extra": "2.4.0"
         },
         "indirect": {
+        }
+    },
+    "test-dependencies": {
+        "direct": {
+        },
+        "indirect": {
+        }
+    }
+}
+'
+
+elm_json_with_set_extra='
+{
+    "type": "application",
+    "source-directories": [
+        "src"
+    ],
+    "elm-version": "0.19.1",
+    "dependencies": {
+        "direct": {
+            "elm/core": "1.0.5",
+            "elm/json": "1.1.3",
+            "elm/time": "1.0.0",
+            "stoeffel/set-extra": "1.2.3"
+        },
+        "indirect": {
+            "elm/html": "1.0.0",
+            "elm/virtual-dom": "1.0.3"
         }
     },
     "test-dependencies": {
@@ -162,7 +194,33 @@ elm_json_with_v1_dict_extra='
 }
 '
 
-gen_elm_wrappers_json='
+elm_json_with_v1_1_set_extra='
+{
+    "type": "application",
+    "source-directories": [
+        "src"
+    ],
+    "elm-version": "0.19.1",
+    "dependencies": {
+        "direct": {
+            "elm/core": "1.0.5",
+            "elm/json": "1.1.3",
+            "elm/time": "1.0.0",
+            "stoeffel/set-extra": "1.1.0"
+        },
+        "indirect": {
+        }
+    },
+    "test-dependencies": {
+        "direct": {
+        },
+        "indirect": {
+        }
+    }
+}
+'
+
+gen_elm_wrappers_dict_json='
 {
     "generate": [
         {
@@ -177,16 +235,33 @@ gen_elm_wrappers_json='
 }
 '
 
+gen_elm_wrappers_set_json='
+{
+    "generate": [
+        {
+            "underlying-type": "Set",
+            "wrapper-type": "Type.SetTimePosix.SetTimePosix",
+            "public-key-type": "Time.Posix",
+            "private-key-type": "Int",
+            "private-key-to-public-key": "Helpers.maybePosixFromMillis",
+            "public-key-to-private-key": "Time.posixToMillis"
+        }
+    ]
+}
+'
+
 go test github.com/dave4420/gen-elm-wrappers/src
 BINARY_NAME=gen-elm-wrappers BINARY_VERSION='?.?.?' bin/build-binary.sh
 
-expect_success 'core only' "$elm_json_core_only" "$gen_elm_wrappers_json"
+expect_success 'dict with core only' "$elm_json_core_only" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
+expect_success 'dict with dict-extra included' "$elm_json_with_dict_extra" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
+expect_failure_to_generate 'dict with far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
+expect_failure_to_generate 'dict with v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_dict_json" Type.DictTimePosix
 
-expect_success 'dict-extra included' "$elm_json_with_extras" "$gen_elm_wrappers_json"
-
-expect_failure_to_generate 'far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_json"
-
-expect_failure_to_generate 'v1 dict-extra' "$elm_json_with_v1_dict_extra" "$gen_elm_wrappers_json"
+expect_success 'set with core only' "$elm_json_core_only" "$gen_elm_wrappers_set_json" Type.SetTimePosix
+expect_success 'set with set-extra included' "$elm_json_with_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
+expect_failure_to_generate 'set with far future elm/core' "$elm_json_with_far_future_elm_core" "$gen_elm_wrappers_set_json" Type.SetTimePosix
+expect_failure_to_generate 'set with v1.1 set-extra' "$elm_json_with_v1_1_set_extra" "$gen_elm_wrappers_set_json" Type.SetTimePosix
 
 expect_files_to_contain_current_year LICENSE
 
