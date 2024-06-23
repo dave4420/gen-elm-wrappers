@@ -208,8 +208,7 @@ This runs the unit tests whenever the source code changes.
 
 ## If you’re a hiring manager or a recruiter
 
-I’m not looking for a job, no. Although I’m always interested in hearing
-about jobs involving Elm and/or climate tech.
+I’m looking for a job, yes.
 
 - Senior / tech lead roles
 - Full stack or backend
